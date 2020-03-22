@@ -56,6 +56,8 @@ const nonogram = nonoThree(false);
 // nonoTwo(false);
 // nonoThree(false);
 
-print(nonogram);
+print(nonogram); //empty
 
 solve(nonogram);
+
+print(nonogram); //solved

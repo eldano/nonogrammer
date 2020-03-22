@@ -1,5 +1,4 @@
 import { Nonogram, Hints, Square } from "./nonogram";
-import print from "./console_printer";
 
 class BruteSolver {
   nonogram: Nonogram;
@@ -124,7 +123,9 @@ export default function solve(nonogram: Nonogram): void {
   const maxIndices = possibilitiesSet.map(arr => arr.length); //[1, 3, 1]
   const indexCombinations = getIndexCombinations(maxIndices); //[1, 3, 1] => [[0, 0 ,0], [0, 1, 0], [0, 2, 0]]
 
-  indexCombinations.forEach(combination => {
+  for (let j = 0; j < indexCombinations.length; j++) {
+    const combination = indexCombinations[j];
+
     const testSolution: Square[][] = [];
     for (let i = 0; i < combination.length; i++) {
       testSolution.push(possibilitiesSet[i][combination[i]]);
@@ -134,9 +135,9 @@ export default function solve(nonogram: Nonogram): void {
 
     if (solver.isValid()) {
       console.log("I found the solution!!!");
-      print(nonogram);
+      return;
     }
-  });
+  }
 }
 
 declare global {
