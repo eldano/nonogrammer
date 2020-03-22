@@ -49,7 +49,10 @@ class BruteSolver {
 
     return false;
   }
-
+  /**
+   * Checks if a Nonogram is valid, i.e: All row and column rules are fulfilled.
+   * @returns boolean
+   */
   isValid(): boolean {
     for (let col = 0; col < this.nonogram.width; col++) {
       const breaksRule = this.breaksColRule(col);
@@ -63,9 +66,18 @@ class BruteSolver {
   }
 }
 
-function getPossibilities(width: number, rule: Hints): Square[][] {
+/**
+ * Returns all the possible combinations for a vector given its length and a rule.
+ * Examples:
+ *   getPossibilities(3, [1]) => [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+ *
+ * @param  {number} length length of the vector
+ * @param  {Hints} rule a rule that the vector must fulfill
+ * @returns Square[][] An array with all the possible values for the vector
+ */
+function getPossibilities(length: number, rule: Hints): Square[][] {
   // prettier-ignore
-  if (width === 3) {
+  if (length === 3) {
     if (rule.equals([1])) {
       return [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
     } else if (rule.equals([2])) {
@@ -80,7 +92,18 @@ function getPossibilities(width: number, rule: Hints): Square[][] {
   return [[0, 0, 0]];
 }
 
-//[1, 3, 1] => [[0, 0 ,0], [0, 1, 0], [0, 2, 0]]
+/**
+ * Given an array where every value represents the number of possible values on that position
+ * returns all the possible combination of values.
+ * A value of `1` in the input array means that only the value `0` is allowed on that position.
+ * A value of `3` in the input array means that the values `0`, `1` and `2` are allowed on that position.
+ * Example:
+ *   getIndexCombinations([1, 3, 1]) => [[0, 0 ,0], [0, 1, 0], [0, 2, 0]]
+ *   getIndexCombinations([2, 2]) => [[0, 0], [0, 1], [1, 0], [1, 1]]
+ *
+ * @param  {number[]} maxPossibilities
+ * @returns number[][]
+ */
 function getIndexCombinations(maxPossibilities: number[]): number[][] {
   if (maxPossibilities.length === 1) {
     const result = [];
