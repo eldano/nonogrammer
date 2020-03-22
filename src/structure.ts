@@ -1,17 +1,18 @@
 export type Hints = Array<number>;
+type Square = 0 | 1;
 
 export class Structure {
   width: number;
   height: number;
   rowHints: Array<Hints>;
   colHints: Array<Hints>;
-  grid: Array<Array<boolean>>;
+  grid: Array<Array<Square>>;
 
   constructor() {
     this.width = 1;
     this.height = 1;
     this.rowHints = [];
     this.colHints = [];
-    this.grid = [[false]];
+    this.grid = [[0]];
   }
 }

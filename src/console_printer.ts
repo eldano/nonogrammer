@@ -51,8 +51,8 @@ export default function print(nonogram: Structure): void {
     // print row of grid
     for (let k = 0; k < nonogram.width; k++) {
       const value = nonogram.grid[index][k];
-      const valueStr = value ? FILLCHAR : " ";
-      const padChar = value ? FILLCHAR : " ";
+      const valueStr = value === 1 ? FILLCHAR : " ";
+      const padChar = value === 1 ? FILLCHAR : " ";
       process.stdout.write(valueStr.padStart(PADSTART, padChar));
     }
 
