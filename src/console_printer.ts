@@ -8,8 +8,6 @@ let largestColDefinition = 0;
 
 function printHeading(nonogram: Nonogram): void {
   console.log(`Nonogram ${nonogram.width} x ${nonogram.height}`);
-  console.log(`Max Row Defs: ${largestRowDefinition}`);
-  console.log(`Max Col Defs: ${largestColDefinition}`);
   console.log("");
 }
 
