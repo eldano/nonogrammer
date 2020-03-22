@@ -1,6 +1,8 @@
 import { Structure } from "./structure";
 
 const PADSTART = 3;
+const FILLCHAR = "█";
+
 let largestRowDefinition = 0;
 let largestColDefinition = 0;
 
@@ -49,8 +51,9 @@ export default function print(nonogram: Structure): void {
     // print row of grid
     for (let k = 0; k < nonogram.width; k++) {
       const value = nonogram.grid[index][k];
-      const valueStr = value ? "X" : " ";
-      process.stdout.write(valueStr.padStart(PADSTART));
+      const valueStr = value ? FILLCHAR : " ";
+      const padChar = value ? FILLCHAR : " ";
+      process.stdout.write(valueStr.padStart(PADSTART, padChar));
     }
 
     process.stdout.write("\n");
