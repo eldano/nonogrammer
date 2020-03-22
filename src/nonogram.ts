@@ -1,5 +1,5 @@
 export type Hints = Array<number>;
-type Square = 0 | 1;
+export type Square = 0 | 1;
 
 export class Nonogram {
   width: number;
