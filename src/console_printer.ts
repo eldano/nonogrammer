@@ -1,4 +1,4 @@
-import { Structure } from "./structure";
+import { Nonogram } from "./nonogram";
 
 const PADSTART = 3;
 const FILLCHAR = "█";
@@ -6,14 +6,14 @@ const FILLCHAR = "█";
 let largestRowDefinition = 0;
 let largestColDefinition = 0;
 
-function printHeading(nonogram: Structure): void {
+function printHeading(nonogram: Nonogram): void {
   console.log(`Nonogram ${nonogram.width} x ${nonogram.height}`);
   console.log(`Max Row Defs: ${largestRowDefinition}`);
   console.log(`Max Col Defs: ${largestColDefinition}`);
   console.log("");
 }
 
-function printColHints(nonogram: Structure): void {
+function printColHints(nonogram: Nonogram): void {
   for (let i = largestColDefinition - 1; i >= 0; i--) {
     for (let j = 0; j < largestRowDefinition; j++) {
       process.stdout.write(" ".padStart(PADSTART));
@@ -30,7 +30,7 @@ function printColHints(nonogram: Structure): void {
   }
 }
 
-export default function print(nonogram: Structure): void {
+export default function print(nonogram: Nonogram): void {
   largestRowDefinition = Math.max(...nonogram.rowHints.map(hint => hint.length));
   largestColDefinition = Math.max(...nonogram.colHints.map(hint => hint.length));
 

@@ -1,7 +1,7 @@
 export type Hints = Array<number>;
 type Square = 0 | 1;
 
-export class Structure {
+export class Nonogram {
   width: number;
   height: number;
   rowHints: Array<Hints>;

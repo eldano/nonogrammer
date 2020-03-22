@@ -1,7 +1,7 @@
-import { Structure } from "./structure";
+import { Nonogram } from "./nonogram";
 import print from "./console_printer";
 
-const nonogram = new Structure();
+const nonogram = new Nonogram();
 
 nonogram.width = 10;
 nonogram.height = 5;
