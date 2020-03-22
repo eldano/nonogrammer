@@ -8,11 +8,18 @@ export class Nonogram {
   colHints: Array<Hints>;
   grid: Array<Array<Square>>;
 
-  constructor() {
-    this.width = 1;
-    this.height = 1;
+  constructor(width: number, height: number) {
+    this.width = width;
+    this.height = height;
     this.rowHints = [];
     this.colHints = [];
-    this.grid = [[0]];
+    this.grid = [];
+
+    for (let row = 0; row < height; row++) {
+      this.grid[row] = [];
+      for (let col = 0; col < width; col++) {
+        this.grid[row][col] = 0;
+      }
+    }
   }
 }
