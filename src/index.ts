@@ -38,8 +38,10 @@ function nonoTwo(filled: boolean): Nonogram {
 function nonoThree(filled: boolean): Nonogram {
   const nonogram = new Nonogram(3, 3);
 
+  // nonogram.rowsRules = [[1, 1], [1], [1, 1]];
+  // nonogram.colsRules = [[1, 1], [1], [1, 1]];
   nonogram.rowsRules = [[1, 1], [1], [1, 1]];
-  nonogram.colsRules = [[1, 1], [1], [1, 1]];
+  nonogram.colsRules = [[1, 1], [], [3]];
 
   if (filled) {
     nonogram.grid = [
