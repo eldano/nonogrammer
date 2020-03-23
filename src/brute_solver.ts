@@ -1,15 +1,15 @@
 import { Nonogram, Rule, Square } from "./nonogram";
 
 /**
- * Returns all the possible combinations for a vector given its length and a rule.
+ * Returns all the possible vectors of `length` that fulfill the given `rule`
  * Examples:
- *   getPossibilities(3, [1]) => [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+ *   getPossibilities([1], 3) => [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
  *
- * @param  {number} length length of the vector
  * @param  {Rule} rule a rule that the vector must fulfill
+ * @param  {number} length length of the vector
  * @returns Square[][] An array with all the possible values for the vector
  */
-function getPossibilities(length: number, rule: Rule): Square[][] {
+function getPossibilities(rule: Rule, length: number): Square[][] {
   // prettier-ignore
   if (length === 3) {
     if (rule.equals([1])) {
@@ -147,7 +147,7 @@ export default function solve(nonogram: Nonogram): void {
   const possibilitiesSet: Square[][][] = [];
 
   for (let row = 0; row < nonogram.height; row++) {
-    possibilitiesSet.push(getPossibilities(nonogram.width, nonogram.rowsRules[row]));
+    possibilitiesSet.push(getPossibilities(nonogram.rowsRules[row], nonogram.width));
   }
 
   const maxIndices = possibilitiesSet.map(arr => arr.length); //[1, 3, 1]
