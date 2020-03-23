@@ -1,5 +1,15 @@
 import { Nonogram, Rule, Square } from "./nonogram";
 
+declare global {
+  interface Array<T> {
+    equals(arr: Array<T>): boolean;
+  }
+}
+
+Array.prototype.equals = function(arr): boolean {
+  return this.length == arr.length && this.every((u, i) => u === arr[i]);
+};
+
 /**
  * Returns all the possible vectors of `length` that fulfill the given `rule`
  * Examples:
@@ -86,13 +96,3 @@ export default function solve(nonogram: Nonogram): void {
     }
   }
 }
-
-declare global {
-  interface Array<T> {
-    equals(arr: Array<T>): boolean;
-  }
-}
-
-Array.prototype.equals = function(arr): boolean {
-  return this.length == arr.length && this.every((u, i) => u === arr[i]);
-};
