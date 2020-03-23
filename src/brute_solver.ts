@@ -66,6 +66,13 @@ function getIndexCombinations(maxPossibilities: number[]): number[][] {
   }
 }
 
+/**
+ * Given a vector of squares, returns an array of consecutive segments.
+ * Examples:
+ *    stateVectorToSegments([0, 1, 1, 0, 1]) => [2, 1]
+ * @param  {Square[]} vector
+ * @returns number[]
+ */
 function stateVectorToSegments(vector: Square[]): number[] {
   const segments: number[] = [];
   let pushNextOne = true;
@@ -85,6 +92,7 @@ function stateVectorToSegments(vector: Square[]): number[] {
 
   return segments;
 }
+
 /**
  * Returns true if the nonogram is breaking a rule in the passed column
  * @param  {Nonogram} nonogram
