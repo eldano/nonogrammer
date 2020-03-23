@@ -21,7 +21,7 @@ function printColsRules(nonogram: Nonogram): void {
       if (definition.length - 1 < i) {
         process.stdout.write(" ".padStart(PADSTART));
       } else {
-        process.stdout.write(definition[i].toString().padStart(PADSTART));
+        process.stdout.write(definition[definition.length - 1 - i].toString().padStart(PADSTART));
       }
     });
     process.stdout.write("\n");
