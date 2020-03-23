@@ -69,29 +69,20 @@ function* cartesian(possibilities: Square[][][]): Generator<Square[][], void> {
  * @returns void
  */
 export default function solve(nonogram: Nonogram): void {
-  const possibilitiesSet: Square[][][] = [];
+  const rowCombos = nonogram.rowsRules.map(rule => getPossibilities(rule, nonogram.width));
 
-  for (let row = 0; row < nonogram.height; row++) {
-    possibilitiesSet.push(getPossibilities(nonogram.rowsRules[row], nonogram.width));
-  }
-
-  const allCombinations = cartesian(possibilitiesSet);
-  let combination = allCombinations.next();
+  const gridCombosGenerator = cartesian(rowCombos);
+  let combination = gridCombosGenerator.next();
   let solved = false;
 
   while (!solved && !combination.done) {
-    const testSolution: Square[][] = [];
-    for (let i = 0; i < combination.value.length; i++) {
-      testSolution.push(combination.value[i]);
-    }
-
-    nonogram.grid = testSolution;
+    nonogram.grid = combination.value;
 
     if (isValid(nonogram)) {
       console.log("I found the solution!!!");
       solved = true;
     } else {
-      combination = allCombinations.next();
+      combination = gridCombosGenerator.next();
     }
   }
 }
