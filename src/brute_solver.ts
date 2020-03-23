@@ -54,32 +54,17 @@ function stateVectorToSegments(vector: Square[]): number[] {
 }
 
 /**
- * Returns true if the nonogram is breaking a rule in the passed column
+ * Returns true if the squares in the column don't break the column rule
  * @param  {Nonogram} nonogram
  * @param  {number} col
  * @returns boolean
  */
-function breaksColRule(nonogram: Nonogram, col: number): boolean {
+function isColValid(nonogram: Nonogram, col: number): boolean {
   const colRule = nonogram.colsRules[col];
-  const testVector: Square[] = [];
-
-  for (let i = 0; i < nonogram.grid.length; i++) {
-    testVector[i] = nonogram.grid[i][col];
-  }
-
+  const testVector = nonogram.grid.map(row => row[col]);
   const segments = stateVectorToSegments(testVector);
 
-  if (segments.length > colRule.length) {
-    return true;
-  }
-
-  for (let i = 0; i < segments.length; i++) {
-    if (segments[i] > colRule[i]) {
-      return true;
-    }
-  }
-
-  return false;
+  return segments.equals(colRule);
 }
 
 /**
@@ -87,15 +72,9 @@ function breaksColRule(nonogram: Nonogram, col: number): boolean {
  * @returns boolean
  */
 function isValid(nonogram: Nonogram): boolean {
-  for (let col = 0; col < nonogram.width; col++) {
-    const breaksRule = breaksColRule(nonogram, col);
+  const cols = [...Array(nonogram.width).keys()];
 
-    if (breaksRule) {
-      return false;
-    }
-  }
-
-  return true;
+  return cols.every(col => isColValid(nonogram, col));
 }
 
 function* cartesian(possibilities: Square[][][]): Generator<Square[][], void> {
