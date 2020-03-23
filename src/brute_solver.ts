@@ -138,14 +138,16 @@ function isValid(nonogram: Nonogram): boolean {
   return true;
 }
 
+/**
+ * Solves the passed nonogram with a brute force strategy.
+ * @param  {Nonogram} nonogram
+ * @returns void
+ */
 export default function solve(nonogram: Nonogram): void {
-  const height = nonogram.height;
-  const width = nonogram.width;
-
   const possibilitiesSet: Square[][][] = [];
 
-  for (let row = 0; row < height; row++) {
-    possibilitiesSet.push(getPossibilities(width, nonogram.rowsRules[row]));
+  for (let row = 0; row < nonogram.height; row++) {
+    possibilitiesSet.push(getPossibilities(nonogram.width, nonogram.rowsRules[row]));
   }
 
   const maxIndices = possibilitiesSet.map(arr => arr.length); //[1, 3, 1]
