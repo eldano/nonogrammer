@@ -11,13 +11,13 @@ function printHeading(nonogram: Nonogram): void {
   console.log("");
 }
 
-function printColHints(nonogram: Nonogram): void {
+function printColsRules(nonogram: Nonogram): void {
   for (let i = largestColDefinition - 1; i >= 0; i--) {
     for (let j = 0; j < largestRowDefinition; j++) {
       process.stdout.write(" ".padStart(PADSTART));
     }
 
-    nonogram.colHints.forEach(definition => {
+    nonogram.colsRules.forEach(definition => {
       if (definition.length - 1 < i) {
         process.stdout.write(" ".padStart(PADSTART));
       } else {
@@ -29,13 +29,13 @@ function printColHints(nonogram: Nonogram): void {
 }
 
 export default function print(nonogram: Nonogram): void {
-  largestRowDefinition = Math.max(...nonogram.rowHints.map(hint => hint.length));
-  largestColDefinition = Math.max(...nonogram.colHints.map(hint => hint.length));
+  largestRowDefinition = Math.max(...nonogram.rowsRules.map(rule => rule.length));
+  largestColDefinition = Math.max(...nonogram.colsRules.map(rule => rule.length));
 
   printHeading(nonogram);
-  printColHints(nonogram);
+  printColsRules(nonogram);
 
-  nonogram.rowHints.forEach((definition, index) => {
+  nonogram.rowsRules.forEach((definition, index) => {
     const spacesToTheLeft = largestRowDefinition - definition.length;
 
     for (let j = 0; j < spacesToTheLeft; j++) {

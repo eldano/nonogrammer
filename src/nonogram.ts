@@ -1,18 +1,18 @@
-export type Hints = Array<number>;
+export type Rule = Array<number>;
 export type Square = 0 | 1;
 
 export class Nonogram {
   width: number;
   height: number;
-  rowHints: Array<Hints>;
-  colHints: Array<Hints>;
+  rowsRules: Array<Rule>;
+  colsRules: Array<Rule>;
   grid: Array<Array<Square>>;
 
   constructor(width: number, height: number) {
     this.width = width;
     this.height = height;
-    this.rowHints = [];
-    this.colHints = [];
+    this.rowsRules = [];
+    this.colsRules = [];
     this.grid = [];
 
     for (let row = 0; row < height; row++) {

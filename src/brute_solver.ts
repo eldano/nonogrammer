@@ -1,4 +1,4 @@
-import { Nonogram, Hints, Square } from "./nonogram";
+import { Nonogram, Rule, Square } from "./nonogram";
 
 /**
  * Returns all the possible combinations for a vector given its length and a rule.
@@ -6,10 +6,10 @@ import { Nonogram, Hints, Square } from "./nonogram";
  *   getPossibilities(3, [1]) => [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
  *
  * @param  {number} length length of the vector
- * @param  {Hints} rule a rule that the vector must fulfill
+ * @param  {Rule} rule a rule that the vector must fulfill
  * @returns Square[][] An array with all the possible values for the vector
  */
-function getPossibilities(length: number, rule: Hints): Square[][] {
+function getPossibilities(length: number, rule: Rule): Square[][] {
   // prettier-ignore
   if (length === 3) {
     if (rule.equals([1])) {
@@ -100,7 +100,7 @@ function stateVectorToSegments(vector: Square[]): number[] {
  * @returns boolean
  */
 function breaksColRule(nonogram: Nonogram, col: number): boolean {
-  const colHint = nonogram.colHints[col];
+  const colRule = nonogram.colsRules[col];
   const testVector: Square[] = [];
 
   for (let i = 0; i < nonogram.grid.length; i++) {
@@ -109,12 +109,12 @@ function breaksColRule(nonogram: Nonogram, col: number): boolean {
 
   const segments = stateVectorToSegments(testVector);
 
-  if (segments.length > colHint.length) {
+  if (segments.length > colRule.length) {
     return true;
   }
 
   for (let i = 0; i < segments.length; i++) {
-    if (segments[i] > colHint[i]) {
+    if (segments[i] > colRule[i]) {
       return true;
     }
   }
@@ -145,7 +145,7 @@ export default function solve(nonogram: Nonogram): void {
   const possibilitiesSet: Square[][][] = [];
 
   for (let row = 0; row < height; row++) {
-    possibilitiesSet.push(getPossibilities(width, nonogram.rowHints[row]));
+    possibilitiesSet.push(getPossibilities(width, nonogram.rowsRules[row]));
   }
 
   const maxIndices = possibilitiesSet.map(arr => arr.length); //[1, 3, 1]
