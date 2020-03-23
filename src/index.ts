@@ -151,12 +151,18 @@ function nonoSix(filled: boolean): Nonogram {
   return nonogram;
 }
 
-// const nonogram = nonoOne(false);
-// const nonogram = nonoTwo(false);
-// const nonogram = nonoThree(false);
-// const nonogram = nonoFour(false);
-// const nonogram = nonoFive(false);
-const nonogram = nonoSix(false);
+// prettier-ignore
+const nonograms = [
+  nonoOne(false),
+  nonoTwo(false),
+  nonoThree(false),
+  nonoFour(false),
+  nonoFive(false),
+  nonoSix(false),
+];
+
+const index = +process.argv[2];
+const nonogram = nonograms[index];
 
 print(nonogram); //empty
 
