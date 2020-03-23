@@ -1,12 +1,12 @@
-export type Rule = Array<number>;
+export type Rule = number[];
 export type Square = 0 | 1;
 
 export class Nonogram {
   width: number;
   height: number;
-  rowsRules: Array<Rule>;
-  colsRules: Array<Rule>;
-  grid: Array<Array<Square>>;
+  rowsRules: Rule[];
+  colsRules: Rule[];
+  grid: Square[][];
 
   constructor(width: number, height: number) {
     this.width = width;
