@@ -20,20 +20,49 @@ Array.prototype.equals = function(arr): boolean {
  * @returns Square[][] An array with all the possible values for the vector
  */
 function getPossibilities(rule: Rule, length: number): Square[][] {
-  // prettier-ignore
-  if (length === 3) {
-    if (rule.equals([1])) {
-      return [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
-    } else if (rule.equals([2])) {
-      return [[1, 1, 0], [0, 1, 1]];
-    } else if (rule.equals([3])) {
-      return [[1, 1, 1]];
-    } else if (rule.equals([1, 1])) {
-      return [[1, 0, 1]];
+  const totalResults = [];
+
+  if (rule.length === 0 || rule.length > length) {
+    return [];
+  } else if (rule.length === 1) {
+    const maxLeftPadZeroes = length - rule.reduce((acc, val) => acc + val) + rule.length - 1;
+
+    for (let i = 0; i <= maxLeftPadZeroes; i++) {
+      let result: Square[] = Array(i).fill(0);
+
+      const firstRuleItem = rule[0];
+
+      result = result.concat(Array(firstRuleItem).fill(1));
+
+      const remainingZeros = length - i - firstRuleItem;
+
+      if (remainingZeros > 0) {
+        result = result.concat(Array(remainingZeros).fill(0));
+      }
+
+      totalResults.push(result);
+    }
+  } else {
+    const maxLeftPadZeroes = length - rule.reduce((acc, val) => acc + val) + rule.length - 1;
+
+    for (let i = 0; i <= maxLeftPadZeroes; i++) {
+      let result: Square[] = Array(i).fill(0);
+
+      const [firstRuleItem, ...restRuleItems] = rule;
+
+      result = result.concat(Array(firstRuleItem).fill(1));
+      result.push(0);
+
+      const restPossibilities = getPossibilities(restRuleItems, length - firstRuleItem - 1 - i);
+
+      restPossibilities.forEach(possibility => {
+        const realResult = result.concat(possibility);
+        totalResults.push(realResult);
+      });
     }
   }
 
-  return [[0, 0, 0]];
+  return totalResults;
 }
 
 /**
