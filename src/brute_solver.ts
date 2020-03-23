@@ -29,28 +29,16 @@ function getPossibilities(rule: Rule, length: number): Square[][] {
 /**
  * Given a vector of squares, returns an array of consecutive segments.
  * Examples:
- *    stateVectorToSegments([0, 1, 1, 0, 1]) => [2, 1]
+ *    vectorToSegments([0, 1, 1, 0, 1]) => [2, 1]
  * @param  {Square[]} vector
  * @returns number[]
  */
-function stateVectorToSegments(vector: Square[]): number[] {
-  const segments: number[] = [];
-  let pushNextOne = true;
-
-  vector.forEach(value => {
-    if (value === 1) {
-      if (pushNextOne) {
-        segments.push(1);
-        pushNextOne = false;
-      } else {
-        segments[segments.length - 1] += 1;
-      }
-    } else {
-      pushNextOne = true;
-    }
-  });
-
-  return segments;
+function vectorToSegments(vector: Square[]): number[] {
+  return vector
+    .join("")
+    .split("0")
+    .filter(el => el !== "")
+    .map(el => el.length);
 }
 
 /**
@@ -63,7 +51,7 @@ function isValid(nonogram: Nonogram): boolean {
   return cols.every(col => {
     const colRule = nonogram.colsRules[col];
     const testVector = nonogram.grid.map(row => row[col]);
-    const segments = stateVectorToSegments(testVector);
+    const segments = vectorToSegments(testVector);
 
     return segments.equals(colRule);
   });
