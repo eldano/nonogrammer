@@ -27,46 +27,6 @@ function getPossibilities(rule: Rule, length: number): Square[][] {
 }
 
 /**
- * Given an array where every value represents the number of possible values on that position
- * returns all the possible combination of values.
- * A value of `1` in the input array means that only the value `0` is allowed on that position.
- * A value of `3` in the input array means that the values `0`, `1` and `2` are allowed on that position.
- * Example:
- *   getIndexCombinations([1, 3, 1]) => [[0, 0 ,0], [0, 1, 0], [0, 2, 0]]
- *   getIndexCombinations([2, 2]) => [[0, 0], [0, 1], [1, 0], [1, 1]]
- *
- * @param  {number[]} maxPossibilities
- * @returns number[][]
- */
-function getIndexCombinations(maxPossibilities: number[]): number[][] {
-  if (maxPossibilities.length === 1) {
-    const result = [];
-    for (let i = 0; i < maxPossibilities[0]; i++) {
-      result.push([i]);
-    }
-    return result;
-  } else {
-    const first = maxPossibilities.shift();
-    if (first) {
-      const tailCombinations = getIndexCombinations(maxPossibilities);
-      const headCombinations = getIndexCombinations([first]);
-
-      const result = [];
-
-      for (let i = 0; i < headCombinations.length; i++) {
-        for (let j = 0; j < tailCombinations.length; j++) {
-          result.push(headCombinations[i].concat(tailCombinations[j]));
-        }
-      }
-
-      return result;
-    }
-
-    return [];
-  }
-}
-
-/**
  * Given a vector of squares, returns an array of consecutive segments.
  * Examples:
  *    stateVectorToSegments([0, 1, 1, 0, 1]) => [2, 1]
@@ -138,6 +98,12 @@ function isValid(nonogram: Nonogram): boolean {
   return true;
 }
 
+function* cartesian(possibilities: Square[][][]): Generator<Square[][], void> {
+  const [head, ...tail] = possibilities;
+  const remainder = tail.length ? cartesian(tail) : [[]];
+  for (const r of remainder) for (const h of head) yield [h, ...r];
+}
+
 /**
  * Solves the passed nonogram with a brute force strategy.
  * @param  {Nonogram} nonogram
@@ -150,22 +116,23 @@ export default function solve(nonogram: Nonogram): void {
     possibilitiesSet.push(getPossibilities(nonogram.rowsRules[row], nonogram.width));
   }
 
-  const maxIndices = possibilitiesSet.map(arr => arr.length); //[1, 3, 1]
-  const indexCombinations = getIndexCombinations(maxIndices); //[1, 3, 1] => [[0, 0 ,0], [0, 1, 0], [0, 2, 0]]
+  const allCombinations = cartesian(possibilitiesSet);
+  let combination = allCombinations.next();
+  let solved = false;
 
-  for (let j = 0; j < indexCombinations.length; j++) {
-    const combination = indexCombinations[j];
-
+  while (!solved && !combination.done) {
     const testSolution: Square[][] = [];
-    for (let i = 0; i < combination.length; i++) {
-      testSolution.push(possibilitiesSet[i][combination[i]]);
+    for (let i = 0; i < combination.value.length; i++) {
+      testSolution.push(combination.value[i]);
     }
 
     nonogram.grid = testSolution;
 
     if (isValid(nonogram)) {
       console.log("I found the solution!!!");
-      return;
+      solved = true;
+    } else {
+      combination = allCombinations.next();
     }
   }
 }
