@@ -1,71 +1,5 @@
 import { Nonogram, Hints, Square } from "./nonogram";
 
-class BruteSolver {
-  nonogram: Nonogram;
-
-  constructor(nonogram: Nonogram) {
-    this.nonogram = nonogram;
-  }
-
-  stateVectorToSegments(vector: Square[]): number[] {
-    const segments: number[] = [];
-    let pushNextOne = true;
-
-    vector.forEach(value => {
-      if (value === 1) {
-        if (pushNextOne) {
-          segments.push(1);
-          pushNextOne = false;
-        } else {
-          segments[segments.length - 1] += 1;
-        }
-      } else {
-        pushNextOne = true;
-      }
-    });
-
-    return segments;
-  }
-
-  breaksColRule(col: number): boolean {
-    const colHint = this.nonogram.colHints[col];
-    const testVector: Square[] = [];
-
-    for (let i = 0; i < this.nonogram.grid.length; i++) {
-      testVector[i] = this.nonogram.grid[i][col];
-    }
-
-    const segments = this.stateVectorToSegments(testVector);
-
-    if (segments.length > colHint.length) {
-      return true;
-    }
-
-    for (let i = 0; i < segments.length; i++) {
-      if (segments[i] > colHint[i]) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-  /**
-   * Checks if a Nonogram is valid, i.e: All row and column rules are fulfilled.
-   * @returns boolean
-   */
-  isValid(): boolean {
-    for (let col = 0; col < this.nonogram.width; col++) {
-      const breaksRule = this.breaksColRule(col);
-
-      if (breaksRule) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-}
-
 /**
  * Returns all the possible combinations for a vector given its length and a rule.
  * Examples:
@@ -132,8 +66,71 @@ function getIndexCombinations(maxPossibilities: number[]): number[][] {
   }
 }
 
+function stateVectorToSegments(vector: Square[]): number[] {
+  const segments: number[] = [];
+  let pushNextOne = true;
+
+  vector.forEach(value => {
+    if (value === 1) {
+      if (pushNextOne) {
+        segments.push(1);
+        pushNextOne = false;
+      } else {
+        segments[segments.length - 1] += 1;
+      }
+    } else {
+      pushNextOne = true;
+    }
+  });
+
+  return segments;
+}
+/**
+ * Returns true if the nonogram is breaking a rule in the passed column
+ * @param  {Nonogram} nonogram
+ * @param  {number} col
+ * @returns boolean
+ */
+function breaksColRule(nonogram: Nonogram, col: number): boolean {
+  const colHint = nonogram.colHints[col];
+  const testVector: Square[] = [];
+
+  for (let i = 0; i < nonogram.grid.length; i++) {
+    testVector[i] = nonogram.grid[i][col];
+  }
+
+  const segments = stateVectorToSegments(testVector);
+
+  if (segments.length > colHint.length) {
+    return true;
+  }
+
+  for (let i = 0; i < segments.length; i++) {
+    if (segments[i] > colHint[i]) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Checks if a Nonogram is valid, i.e: All row and column rules are fulfilled.
+ * @returns boolean
+ */
+function isValid(nonogram: Nonogram): boolean {
+  for (let col = 0; col < nonogram.width; col++) {
+    const breaksRule = breaksColRule(nonogram, col);
+
+    if (breaksRule) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 export default function solve(nonogram: Nonogram): void {
-  const solver = new BruteSolver(nonogram);
   const height = nonogram.height;
   const width = nonogram.width;
 
@@ -156,7 +153,7 @@ export default function solve(nonogram: Nonogram): void {
 
     nonogram.grid = testSolution;
 
-    if (solver.isValid()) {
+    if (isValid(nonogram)) {
       console.log("I found the solution!!!");
       return;
     }
