@@ -133,6 +133,7 @@ function nonoFive(filled: boolean): Nonogram {
   return nonogram;
 }
 
+// https://www.nonograms.org/nonograms/i/2944
 function nonoSix(filled: boolean): Nonogram {
   const nonogram = new Nonogram(7, 9);
 
