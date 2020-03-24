@@ -3,11 +3,16 @@ import { Nonogram, Rule, Square } from "./nonogram";
 declare global {
   interface Array<T> {
     equals(arr: Array<T>): boolean;
+    sum(): number;
   }
 }
 
 Array.prototype.equals = function(arr): boolean {
   return this.length == arr.length && this.every((u, i) => u === arr[i]);
+};
+
+Array.prototype.sum = function(): number {
+  return this.reduce((acc, val) => acc + val);
 };
 
 /**
@@ -25,7 +30,7 @@ function getPossibilities(rule: Rule, length: number): Square[][] {
   if (rule.length === 0 || rule.length > length) {
     return [];
   } else {
-    const maxLeftPadZeroes = length - rule.reduce((acc, val) => acc + val) + rule.length - 1;
+    const maxLeftPadZeroes = length - rule.sum() + rule.length - 1;
 
     for (let i = 0; i <= maxLeftPadZeroes; i++) {
       let result: Square[] = Array(i).fill(0);
