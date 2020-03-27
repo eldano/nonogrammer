@@ -15,6 +15,13 @@ Array.prototype.sum = function(): number {
   return this.reduce((acc, val) => acc + val);
 };
 
+/**
+ * Returns a Square[] with `leftPad` zeroes, followed by `sequence` ones, followed by `rightPad` zeroes.
+ * @param  {number} leftPad number of zeros to the left (has to be >= 0)
+ * @param  {number} sequence number of ones in the middle (has to be >= 0)
+ * @param  {number} rightPad number of zeros to the left (has to be >= 0)
+ * @returns Square
+ */
 function paddedSequence(leftPad: number, sequence: number, rightPad: number): Square[] {
   return Array(leftPad)
     .fill(0)
@@ -39,17 +46,17 @@ function getPossibilities(rule: Rule, length: number): Square[][] {
   } else {
     const maxLeftPadZeroes = length - rule.sum() - rule.length + 1;
 
-    for (let i = 0; i <= maxLeftPadZeroes; i++) {
+    for (let leftPadZeroes = 0; leftPadZeroes <= maxLeftPadZeroes; leftPadZeroes++) {
       if (rule.length === 1) {
-        const remainingZeros = length - i - rule[0];
-        const result = paddedSequence(i, rule[0], remainingZeros);
+        const remainingZeros = length - leftPadZeroes - rule[0];
+        const result = paddedSequence(leftPadZeroes, rule[0], remainingZeros);
 
         totalResults.push(result);
       } else {
         const [firstRuleItem, ...restRuleItems] = rule;
-        const result = paddedSequence(i, firstRuleItem, 1);
+        const result = paddedSequence(leftPadZeroes, firstRuleItem, 1);
 
-        const restPossibilities = getPossibilities(restRuleItems, length - firstRuleItem - 1 - i);
+        const restPossibilities = getPossibilities(restRuleItems, length - firstRuleItem - 1 - leftPadZeroes);
 
         restPossibilities.forEach(possibility => {
           totalResults.push(result.concat(possibility));
