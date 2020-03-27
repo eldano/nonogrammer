@@ -15,6 +15,13 @@ Array.prototype.sum = function(): number {
   return this.reduce((acc, val) => acc + val);
 };
 
+function paddedSequence(leftPad: number, sequence: number, rightPad: number): Square[] {
+  return Array(leftPad)
+    .fill(0)
+    .concat(Array(sequence).fill(1))
+    .concat(Array(rightPad).fill(0));
+}
+
 /**
  * Returns all the possible vectors of `length` that fulfill the given `rule`
  * Examples:
@@ -30,31 +37,22 @@ function getPossibilities(rule: Rule, length: number): Square[][] {
   if (rule.length === 0 || rule.length > length) {
     return [];
   } else {
-    const maxLeftPadZeroes = length - rule.sum() + rule.length - 1;
+    const maxLeftPadZeroes = length - rule.sum() - rule.length + 1;
 
     for (let i = 0; i <= maxLeftPadZeroes; i++) {
-      let result: Square[] = Array(i).fill(0);
-
       if (rule.length === 1) {
-        const firstRuleItem = rule[0];
-        result = result.concat(Array(firstRuleItem).fill(1));
-        const remainingZeros = length - i - firstRuleItem;
-
-        if (remainingZeros > 0) {
-          result = result.concat(Array(remainingZeros).fill(0));
-        }
+        const remainingZeros = length - i - rule[0];
+        const result = paddedSequence(i, rule[0], remainingZeros);
 
         totalResults.push(result);
       } else {
         const [firstRuleItem, ...restRuleItems] = rule;
-        result = result.concat(Array(firstRuleItem).fill(1));
-        result.push(0);
+        const result = paddedSequence(i, firstRuleItem, 1);
 
         const restPossibilities = getPossibilities(restRuleItems, length - firstRuleItem - 1 - i);
 
         restPossibilities.forEach(possibility => {
-          const realResult = result.concat(possibility);
-          totalResults.push(realResult);
+          totalResults.push(result.concat(possibility));
         });
       }
     }
