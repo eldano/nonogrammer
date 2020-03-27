@@ -38,8 +38,6 @@ function nonoTwo(filled: boolean): Nonogram {
 function nonoThree(filled: boolean): Nonogram {
   const nonogram = new Nonogram(3, 3);
 
-  // nonogram.rowsRules = [[1, 1], [1], [1, 1]];
-  // nonogram.colsRules = [[1, 1], [1], [1, 1]];
   nonogram.rowsRules = [[1, 1], [1], [1, 1]];
   nonogram.colsRules = [[1, 1], [], [3]];
 
@@ -96,14 +94,17 @@ function nonoFour(filled: boolean): Nonogram {
     [3],
   ];
 
+  if (filled) {
+    // Fill nonogram
+  }
+
   return nonogram;
 }
 
 function nonoFive(filled: boolean): Nonogram {
   const nonogram = new Nonogram(10, 10);
 
-  // nonogram.rowsRules = [[1, 1], [1], [1, 1]];
-  // nonogram.colsRules = [[1, 1], [1], [1, 1]];
+  //prettier-ignore
   nonogram.rowsRules = [
     [2],
     [1, 1],
@@ -117,6 +118,7 @@ function nonoFive(filled: boolean): Nonogram {
     [3, 5],
   ];
 
+  //prettier-ignore
   nonogram.colsRules = [
     [2, 1],
     [1, 1, 1, 2],
@@ -129,6 +131,10 @@ function nonoFive(filled: boolean): Nonogram {
     [1],
     [3],
   ];
+
+  if (filled) {
+    // Fill nonogram
+  }
 
   return nonogram;
 }
@@ -147,6 +153,10 @@ function nonoSix(filled: boolean): Nonogram {
     [2, 2, 2],
     [2, 3, 1],
   ];
+
+  if (filled) {
+    // Fill nonogram
+  }
 
   return nonogram;
 }
