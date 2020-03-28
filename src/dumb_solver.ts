@@ -1,4 +1,4 @@
-import { Nonogram } from "./nonogram";
+import { Nonogram, spaceTaken } from "./nonogram";
 import "./array_ext";
 
 /**
@@ -10,8 +10,7 @@ import "./array_ext";
 function strategyOne(nonogram: Nonogram): void {
   nonogram.grid.forEach((row, index) => {
     const rule = nonogram.rowsRules[index];
-    const takenSpace = rule.sum() + rule.length - 1;
-    const freedom = nonogram.width - takenSpace;
+    const freedom = nonogram.width - spaceTaken(rule);
 
     let col = 0;
     rule.forEach(ruleItem => {
@@ -34,8 +33,7 @@ function strategyOne(nonogram: Nonogram): void {
     const col = nonogram.grid.map(row => row[index]);
 
     const rule = nonogram.colsRules[index];
-    const takenSpace = rule.sum() + rule.length - 1;
-    const freedom = nonogram.height - takenSpace;
+    const freedom = nonogram.height - spaceTaken(rule);
 
     let row = 0;
     rule.forEach(ruleItem => {
