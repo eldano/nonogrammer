@@ -15,6 +15,11 @@ export class Nonogram {
     this.colsRules = [];
     this.grid = [];
 
-    this.grid = Array(height).fill(Array(width).fill(null));
+    for (let row = 0; row < height; row++) {
+      this.grid[row] = [];
+      for (let col = 0; col < width; col++) {
+        this.grid[row][col] = null;
+      }
+    }
   }
 }
