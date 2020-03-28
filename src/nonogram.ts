@@ -1,5 +1,5 @@
 export type Rule = number[];
-export type Square = 0 | 1;
+export type Square = null | 0 | 1;
 
 export class Nonogram {
   width: number;
@@ -15,6 +15,6 @@ export class Nonogram {
     this.colsRules = [];
     this.grid = [];
 
-    this.grid = Array(height).fill(Array(width).fill(0));
+    this.grid = Array(height).fill(Array(width).fill(null));
   }
 }
