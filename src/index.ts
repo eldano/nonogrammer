@@ -1,6 +1,7 @@
 import { Nonogram } from "./nonogram";
 import print from "./console_printer";
-import solve from "./brute_solver";
+//import solve from "./brute_solver";
+import solve from "./dumb_solver";
 
 function nonoOne(filled: boolean): Nonogram {
   const nonogram = new Nonogram(10, 5);
@@ -161,6 +162,23 @@ function nonoSix(filled: boolean): Nonogram {
   return nonogram;
 }
 
+//https://www.nonograms.org/nonograms/i/5754
+function nonoSeven(): Nonogram {
+  const nonogram = new Nonogram(15, 15);
+
+  //prettier-ignore
+  nonogram.rowsRules = [
+    [13], [15], [2, 7, 2], [1, 5, 1], [2, 5, 2], [15], [15], [5, 1, 5], [11], [11], [11], [2, 2], [9], [7], [5]
+  ]
+
+  //prettier-ignore
+  nonogram.colsRules = [
+    [6], [3, 4], [2, 6], [2, 8], [3, 9], [11, 3], [7, 3, 3], [11, 3], [7, 3, 3], [11, 3], [3, 9], [2, 8], [2, 6], [3, 4], [6]
+  ]
+
+  return nonogram;
+}
+
 // prettier-ignore
 const nonograms = [
   nonoOne(false),
@@ -169,6 +187,7 @@ const nonograms = [
   nonoFour(false),
   nonoFive(false),
   nonoSix(false),
+  nonoSeven(),
 ];
 
 const index = +process.argv[2];
