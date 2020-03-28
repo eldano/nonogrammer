@@ -1,7 +1,7 @@
 import { Nonogram } from "./nonogram";
 import print from "./console_printer";
-//import solve from "./brute_solver";
-import solve from "./dumb_solver";
+import bruteSolve from "./brute_solver";
+import dumbSolve from "./dumb_solver";
 
 function nonoOne(filled: boolean): Nonogram {
   const nonogram = new Nonogram(10, 5);
@@ -195,6 +195,6 @@ const nonogram = nonograms[index];
 
 print(nonogram); //empty
 
-solve(nonogram);
+dumbSolve(nonogram);
 
 print(nonogram); //solved
