@@ -48,7 +48,7 @@ export default function print(nonogram: Nonogram): void {
 
     // print row of grid
     for (let k = 0; k < nonogram.width; k++) {
-      const value = nonogram.grid[index][k];
+      const value = nonogram.grid[index * nonogram.width + k];
       let valueStr, padChar;
       if (value === 1) {
         valueStr = FILLCHAR;

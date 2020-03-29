@@ -10,11 +10,14 @@ function nonoOne(filled: boolean): Nonogram {
   nonogram.colsRules = [[2], [1, 1], [4], [4], [5], [5], [5], [5], [4], [3]];
 
   if (filled) {
-    nonogram.grid[0] = [0, 0, 1, 1, 1, 1, 1, 1, 1, 1];
-    nonogram.grid[1] = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
-    nonogram.grid[2] = [1, 0, 1, 1, 1, 1, 1, 1, 1, 1];
-    nonogram.grid[3] = [0, 1, 1, 1, 1, 1, 1, 1, 1, 0];
-    nonogram.grid[4] = [0, 0, 0, 0, 1, 1, 1, 1, 0, 0];
+    //prettier-ignore
+    nonogram.grid = [
+      0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+      1, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+      0, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+      0, 0, 0, 0, 1, 1, 1, 1, 0, 0,
+    ];
   }
 
   return nonogram;
@@ -27,9 +30,10 @@ function nonoTwo(filled: boolean): Nonogram {
   nonogram.colsRules = [[1], [2]];
 
   if (filled) {
+    //prettier-ignore
     nonogram.grid = [
-      [0, 1],
-      [1, 1],
+      0, 1,
+      1, 1,
     ];
   }
 
@@ -43,10 +47,11 @@ function nonoThree(filled: boolean): Nonogram {
   nonogram.colsRules = [[1, 1], [], [3]];
 
   if (filled) {
+    //prettier-ignore
     nonogram.grid = [
-      [1, 0, 1],
-      [0, 1, 0],
-      [1, 0, 1],
+      1, 0, 1,
+      0, 1, 0,
+      1, 0, 1,
     ];
   }
 

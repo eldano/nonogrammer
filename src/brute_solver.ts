@@ -77,7 +77,7 @@ function isValid(nonogram: Nonogram): boolean {
 
   return cols.every(col => {
     const colRule = nonogram.colsRules[col];
-    const testVector = nonogram.grid.map(row => row[col]);
+    const testVector = nonogram.grid.filter((_item, index) => index % nonogram.width === col);
     const segments = vectorToSegments(testVector);
 
     return segments.equals(colRule);
@@ -103,7 +103,7 @@ export default function solve(nonogram: Nonogram): void {
   let solved = false;
 
   while (!solved && !combination.done) {
-    nonogram.grid = combination.value;
+    nonogram.grid = combination.value.reduce((acc, val) => acc.concat(val), []);
 
     if (isValid(nonogram)) {
       console.log("I found the solution!!!");

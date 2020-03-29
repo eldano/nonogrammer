@@ -8,18 +8,18 @@ import "./array_ext";
  * @returns void
  */
 function strategyOne(nonogram: Nonogram): void {
-  nonogram.grid.forEach((row, index) => {
-    const rule = nonogram.rowsRules[index];
+  for (let rowIndex = 0; rowIndex < nonogram.height; rowIndex++) {
+    const rule = nonogram.rowsRules[rowIndex];
     const freedom = nonogram.width - spaceTaken(rule);
 
     let col = 0;
     rule.forEach(ruleItem => {
       if (ruleItem > freedom) {
-        row.replace(col, freedom, null);
+        nonogram.grid.replace(rowIndex * nonogram.width + col, freedom, null);
         col += freedom;
 
         const diff = ruleItem - freedom;
-        row.replace(col, diff, 1);
+        nonogram.grid.replace(rowIndex * nonogram.width + col, diff, 1);
         col += diff;
       } else {
         col += ruleItem;
@@ -27,34 +27,26 @@ function strategyOne(nonogram: Nonogram): void {
 
       col += 1;
     });
-  });
+  }
 
-  for (let index = 0; index < nonogram.width; index++) {
-    const col = nonogram.grid.map(row => row[index]);
-
-    const rule = nonogram.colsRules[index];
+  for (let colIndex = 0; colIndex < nonogram.width; colIndex++) {
+    const rule = nonogram.colsRules[colIndex];
     const freedom = nonogram.height - spaceTaken(rule);
 
     let row = 0;
     rule.forEach(ruleItem => {
       if (ruleItem > freedom) {
-        col.replace(row, freedom, null);
+        nonogram.grid.replaceCol(row * nonogram.width + colIndex, freedom, null, nonogram.width);
         row += freedom;
 
         const diff = ruleItem - freedom;
-        col.replace(row, diff, 1);
+        nonogram.grid.replaceCol(row * nonogram.width + colIndex, diff, 1, nonogram.width);
         row += diff;
       } else {
         row += ruleItem;
       }
 
       row += 1;
-    });
-
-    nonogram.grid.forEach((row, colIndex) => {
-      if (row[index] === null) {
-        row[index] = col[colIndex];
-      }
     });
   }
 }

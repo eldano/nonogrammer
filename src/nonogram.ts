@@ -12,20 +12,13 @@ export class Nonogram {
   height: number;
   rowsRules: Rule[];
   colsRules: Rule[];
-  grid: Square[][];
+  grid: Square[];
 
   constructor(width: number, height: number) {
     this.width = width;
     this.height = height;
     this.rowsRules = [];
     this.colsRules = [];
-    this.grid = [];
-
-    for (let row = 0; row < height; row++) {
-      this.grid[row] = [];
-      for (let col = 0; col < width; col++) {
-        this.grid[row][col] = null;
-      }
-    }
+    this.grid = Array(width * height).fill(null);
   }
 }
