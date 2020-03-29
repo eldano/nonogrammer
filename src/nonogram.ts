@@ -21,4 +21,17 @@ export class Nonogram {
     this.colsRules = [];
     this.grid = Array(width * height).fill(null);
   }
+
+  replaceInRow(rowIndex: number, start: number, occurences: number, value: Square): void {
+    this.grid.splice(rowIndex * this.width + start, occurences, ...Array(occurences).fill(value));
+  }
+
+  replaceInCol(colIndex: number, start: number, occurences: number, value: Square): void {
+    for (let i = 0; i < occurences; i++) {
+      const index = (start + i) * this.width + colIndex;
+      if (this.grid[index] === null) {
+        this.grid[index] = value;
+      }
+    }
+  }
 }

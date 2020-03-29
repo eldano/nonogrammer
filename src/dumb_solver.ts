@@ -15,11 +15,11 @@ function strategyOne(nonogram: Nonogram): void {
     let col = 0;
     rule.forEach(ruleItem => {
       if (ruleItem > freedom) {
-        nonogram.grid.replace(rowIndex * nonogram.width + col, freedom, null);
+        nonogram.replaceInRow(rowIndex, col, freedom, null);
         col += freedom;
 
         const diff = ruleItem - freedom;
-        nonogram.grid.replace(rowIndex * nonogram.width + col, diff, 1);
+        nonogram.replaceInRow(rowIndex, col, diff, 1);
         col += diff;
       } else {
         col += ruleItem;
@@ -36,11 +36,11 @@ function strategyOne(nonogram: Nonogram): void {
     let row = 0;
     rule.forEach(ruleItem => {
       if (ruleItem > freedom) {
-        nonogram.grid.replaceCol(row * nonogram.width + colIndex, freedom, null, nonogram.width);
+        nonogram.replaceInCol(colIndex, row, freedom, null);
         row += freedom;
 
         const diff = ruleItem - freedom;
-        nonogram.grid.replaceCol(row * nonogram.width + colIndex, diff, 1, nonogram.width);
+        nonogram.replaceInCol(colIndex, row, diff, 1);
         row += diff;
       } else {
         row += ruleItem;

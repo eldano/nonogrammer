@@ -3,62 +3,34 @@ import print from "./console_printer";
 import bruteSolve from "./brute_solver";
 import dumbSolve from "./dumb_solver";
 
-function nonoOne(filled: boolean): Nonogram {
+function nonoOne(): Nonogram {
   const nonogram = new Nonogram(10, 5);
 
   nonogram.rowsRules = [[8], [10], [1, 8], [8], [4]];
   nonogram.colsRules = [[2], [1, 1], [4], [4], [5], [5], [5], [5], [4], [3]];
 
-  if (filled) {
-    //prettier-ignore
-    nonogram.grid = [
-      0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
-      1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-      1, 0, 1, 1, 1, 1, 1, 1, 1, 1,
-      0, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-      0, 0, 0, 0, 1, 1, 1, 1, 0, 0,
-    ];
-  }
-
   return nonogram;
 }
 
-function nonoTwo(filled: boolean): Nonogram {
+function nonoTwo(): Nonogram {
   const nonogram = new Nonogram(2, 2);
 
   nonogram.rowsRules = [[1], [2]];
   nonogram.colsRules = [[1], [2]];
 
-  if (filled) {
-    //prettier-ignore
-    nonogram.grid = [
-      0, 1,
-      1, 1,
-    ];
-  }
-
   return nonogram;
 }
 
-function nonoThree(filled: boolean): Nonogram {
+function nonoThree(): Nonogram {
   const nonogram = new Nonogram(3, 3);
 
   nonogram.rowsRules = [[1, 1], [1], [1, 1]];
   nonogram.colsRules = [[1, 1], [], [3]];
 
-  if (filled) {
-    //prettier-ignore
-    nonogram.grid = [
-      1, 0, 1,
-      0, 1, 0,
-      1, 0, 1,
-    ];
-  }
-
   return nonogram;
 }
 
-function nonoFour(filled: boolean): Nonogram {
+function nonoFour(): Nonogram {
   const nonogram = new Nonogram(20, 13);
 
   nonogram.rowsRules = [
@@ -100,14 +72,10 @@ function nonoFour(filled: boolean): Nonogram {
     [3],
   ];
 
-  if (filled) {
-    // Fill nonogram
-  }
-
   return nonogram;
 }
 
-function nonoFive(filled: boolean): Nonogram {
+function nonoFive(): Nonogram {
   const nonogram = new Nonogram(10, 10);
 
   //prettier-ignore
@@ -138,15 +106,11 @@ function nonoFive(filled: boolean): Nonogram {
     [3],
   ];
 
-  if (filled) {
-    // Fill nonogram
-  }
-
   return nonogram;
 }
 
 // https://www.nonograms.org/nonograms/i/2944
-function nonoSix(filled: boolean): Nonogram {
+function nonoSix(): Nonogram {
   const nonogram = new Nonogram(7, 9);
 
   nonogram.rowsRules = [[2, 2], [2, 2], [1, 1, 1, 1], [5], [2, 1, 2], [1, 2, 1], [2, 2], [5], [1, 1]];
@@ -159,10 +123,6 @@ function nonoSix(filled: boolean): Nonogram {
     [2, 2, 2],
     [2, 3, 1],
   ];
-
-  if (filled) {
-    // Fill nonogram
-  }
 
   return nonogram;
 }
@@ -186,12 +146,12 @@ function nonoSeven(): Nonogram {
 
 // prettier-ignore
 const nonograms = [
-  nonoOne(false),
-  nonoTwo(false),
-  nonoThree(false),
-  nonoFour(false),
-  nonoFive(false),
-  nonoSix(false),
+  nonoOne(),
+  nonoTwo(),
+  nonoThree(),
+  nonoFour(),
+  nonoFive(),
+  nonoSix(),
   nonoSeven(),
 ];
 
