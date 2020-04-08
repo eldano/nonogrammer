@@ -34,4 +34,26 @@ export class Nonogram {
       }
     }
   }
+
+  // It can be used in for..of like:
+  // const it = nonogram.rowIterator(2);
+  // for (const itItem of it) {
+  //   console.log(itItem);
+  // }
+  *rowIterator(row: number): Generator<Square, void> {
+    for (let i = row * this.width; i < (row + 1) * this.width; i++) {
+      yield this.grid[i];
+    }
+  }
+
+  // It can be used in for..of like:
+  // const ite = nonogram.colIterator(6);
+  // for (const itItem of ite) {
+  //   console.log(itItem);
+  // }
+  *colIterator(col: number): Generator<Square, void> {
+    for (let i = col; i < this.height * this.width; i += this.width) {
+      yield this.grid[i];
+    }
+  }
 }
