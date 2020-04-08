@@ -15,7 +15,6 @@ function strategyOne(nonogram: Nonogram): void {
     let col = 0;
     rule.forEach(ruleItem => {
       if (ruleItem > freedom) {
-        nonogram.replaceInRow(rowIndex, col, freedom, null);
         col += freedom;
 
         const diff = ruleItem - freedom;
@@ -36,7 +35,6 @@ function strategyOne(nonogram: Nonogram): void {
     let row = 0;
     rule.forEach(ruleItem => {
       if (ruleItem > freedom) {
-        nonogram.replaceInCol(colIndex, row, freedom, null);
         row += freedom;
 
         const diff = ruleItem - freedom;

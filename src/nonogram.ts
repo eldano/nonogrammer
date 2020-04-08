@@ -29,9 +29,7 @@ export class Nonogram {
   replaceInCol(colIndex: number, start: number, occurences: number, value: Square): void {
     for (let i = 0; i < occurences; i++) {
       const index = (start + i) * this.width + colIndex;
-      if (this.grid[index] === null) {
-        this.grid[index] = value;
-      }
+      this.grid[index] = value;
     }
   }
 
