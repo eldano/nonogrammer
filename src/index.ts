@@ -161,5 +161,6 @@ const nonogram = nonograms[index];
 print(nonogram); //empty
 
 dumbSolve(nonogram);
+//bruteSolve(nonogram);
 
 print(nonogram); //solved

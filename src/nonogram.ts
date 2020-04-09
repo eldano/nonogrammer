@@ -7,12 +7,20 @@ export function spaceTaken(rule: Rule): number {
   return rule.sum() + rule.length - 1;
 }
 
+export interface VectorData {
+  rule: Rule;
+  vector: Square[];
+  index: number;
+  kind: "row" | "col";
+}
+
 export class Nonogram {
   width: number;
   height: number;
   rowsRules: Rule[];
   colsRules: Rule[];
-  grid: Square[];
+
+  private grid: Square[];
 
   constructor(width: number, height: number) {
     this.width = width;
@@ -20,6 +28,22 @@ export class Nonogram {
     this.rowsRules = [];
     this.colsRules = [];
     this.grid = Array(width * height).fill(null);
+  }
+
+  getSquare(row: number, column: number): Square {
+    return this.grid[row * this.width + column];
+  }
+
+  setSquare(row: number, column: number, square: Square): void {
+    this.grid[row * this.width + column] = square;
+  }
+
+  getRow(row: number): Square[] {
+    return this.grid.slice(row * this.width, (row + 1) * this.width);
+  }
+
+  getColumn(column: number): Square[] {
+    return this.grid.filter((_item, index) => index % this.width === column);
   }
 
   replaceInRow(rowIndex: number, start: number, occurences: number, value: Square): void {
@@ -33,23 +57,54 @@ export class Nonogram {
     }
   }
 
+  replaceOccurrencesInRow(rowIndex: number, oldValue: Square, newValue: Square): void {
+    for (let col = 0; col < this.width; col++) {
+      if (this.getSquare(rowIndex, col) === oldValue) {
+        this.setSquare(rowIndex, col, newValue);
+      }
+    }
+  }
+
+  replaceOccurrencesInCol(colIndex: number, oldValue: Square, newValue: Square): void {
+    for (let row = 0; row < this.height; row++) {
+      if (this.getSquare(row, colIndex) === oldValue) {
+        this.setSquare(row, colIndex, newValue);
+      }
+    }
+  }
+
+  // Iterates first through rows and then through cols
+  *vectorIterator(type: "rows" | "cols" | "both"): Generator<VectorData, void> {
+    if (type === "rows" || type === "both") {
+      for (let row = 0; row < this.height; row++) {
+        yield { rule: this.rowsRules[row], vector: this.getRow(row), index: row, kind: "row" };
+      }
+    }
+
+    if (type === "cols" || type === "both") {
+      for (let col = 0; col < this.width; col++) {
+        yield { rule: this.colsRules[col], vector: this.getColumn(col), index: col, kind: "col" };
+      }
+    }
+  }
+
   // It can be used in for..of like:
-  // const it = nonogram.rowIterator(2);
+  // const it = nonogram.rowItemsIterator(2);
   // for (const itItem of it) {
   //   console.log(itItem);
   // }
-  *rowIterator(row: number): Generator<Square, void> {
+  *rowItemsIterator(row: number): Generator<Square, void> {
     for (let i = row * this.width; i < (row + 1) * this.width; i++) {
       yield this.grid[i];
     }
   }
 
   // It can be used in for..of like:
-  // const ite = nonogram.colIterator(6);
+  // const ite = nonogram.colItemsIterator(6);
   // for (const itItem of ite) {
   //   console.log(itItem);
   // }
-  *colIterator(col: number): Generator<Square, void> {
+  *colItemsIterator(col: number): Generator<Square, void> {
     for (let i = col; i < this.height * this.width; i += this.width) {
       yield this.grid[i];
     }

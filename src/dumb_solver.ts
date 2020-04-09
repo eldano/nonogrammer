@@ -1,4 +1,4 @@
-import { Nonogram, spaceTaken } from "./nonogram";
+import { Nonogram, spaceTaken, Square } from "./nonogram";
 import "./array_ext";
 
 /**
@@ -49,6 +49,34 @@ function strategyOne(nonogram: Nonogram): void {
   }
 }
 
+// duplicated
+function vectorToSegments(vector: Square[]): number[] {
+  return vector
+    .map(val => (val === null ? "0" : val))
+    .join("")
+    .split("0")
+    .filter(el => el !== "")
+    .map(el => el.length);
+}
+
+function fillEmptiesOnCompleteVectors(nonogram: Nonogram): void {
+  const vectorIterator = nonogram.vectorIterator("cols");
+
+  for (const vectorData of vectorIterator) {
+    const { rule, vector, index, kind } = vectorData;
+    const segments = vectorToSegments(vector);
+
+    if (segments.equals(rule)) {
+      if (kind === "row") {
+        nonogram.replaceOccurrencesInRow(index, null, 0);
+      } else {
+        nonogram.replaceOccurrencesInCol(index, null, 0);
+      }
+    }
+  }
+}
+
 export default function solve(nonogram: Nonogram): void {
   strategyOne(nonogram);
+  fillEmptiesOnCompleteVectors(nonogram);
 }

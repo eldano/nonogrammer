@@ -35,7 +35,7 @@ export default function print(nonogram: Nonogram): void {
   printHeading(nonogram);
   printColsRules(nonogram);
 
-  nonogram.rowsRules.forEach((definition, index) => {
+  nonogram.rowsRules.forEach((definition, row) => {
     const spacesToTheLeft = largestRowDefinition - definition.length;
 
     for (let j = 0; j < spacesToTheLeft; j++) {
@@ -47,9 +47,10 @@ export default function print(nonogram: Nonogram): void {
     }
 
     // print row of grid
-    for (let k = 0; k < nonogram.width; k++) {
-      const value = nonogram.grid[index * nonogram.width + k];
+    for (let column = 0; column < nonogram.width; column++) {
+      const value = nonogram.getSquare(row, column);
       let valueStr, padChar;
+
       if (value === 1) {
         valueStr = FILLCHAR;
         padChar = FILLCHAR;
