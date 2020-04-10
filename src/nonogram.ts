@@ -2,6 +2,7 @@ import "./array_ext";
 
 export type Rule = number[];
 export type Square = null | 0 | 1;
+export type Dimension = "row" | "col";
 
 export function spaceTaken(rule: Rule): number {
   return rule.sum() + rule.length - 1;
@@ -11,23 +12,30 @@ export interface VectorData {
   rule: Rule;
   vector: Square[];
   index: number;
-  kind: "row" | "col";
+  dimension: Dimension;
 }
 
 export class Nonogram {
-  width: number;
-  height: number;
-  rowsRules: Rule[];
-  colsRules: Rule[];
-
+  private width: number;
+  private height: number;
+  private rowsRules: Rule[];
+  private colsRules: Rule[];
   private grid: Square[];
 
-  constructor(width: number, height: number) {
+  constructor(width: number, height: number, rowsRules: Rule[], colsRules: Rule[]) {
     this.width = width;
     this.height = height;
-    this.rowsRules = [];
-    this.colsRules = [];
+    this.rowsRules = rowsRules;
+    this.colsRules = colsRules;
     this.grid = Array(width * height).fill(null);
+  }
+
+  getMaxDim(dim: Dimension): number {
+    return dim === "row" ? this.width : this.height;
+  }
+
+  getDimRules(dim: Dimension): Rule[] {
+    return dim === "row" ? this.rowsRules : this.colsRules;
   }
 
   getSquare(row: number, column: number): Square {
@@ -38,52 +46,51 @@ export class Nonogram {
     this.grid[row * this.width + column] = square;
   }
 
-  getRow(row: number): Square[] {
-    return this.grid.slice(row * this.width, (row + 1) * this.width);
-  }
-
-  getColumn(column: number): Square[] {
-    return this.grid.filter((_item, index) => index % this.width === column);
-  }
-
-  replaceInRow(rowIndex: number, start: number, occurences: number, value: Square): void {
-    this.grid.splice(rowIndex * this.width + start, occurences, ...Array(occurences).fill(value));
-  }
-
-  replaceInCol(colIndex: number, start: number, occurences: number, value: Square): void {
-    for (let i = 0; i < occurences; i++) {
-      const index = (start + i) * this.width + colIndex;
-      this.grid[index] = value;
+  getVector(dimension: Dimension, index: number): Square[] {
+    if (dimension === "row") {
+      return this.grid.slice(index * this.width, (index + 1) * this.width);
+    } else {
+      return this.grid.filter((_item, col) => col % this.width === index);
     }
   }
 
-  replaceOccurrencesInRow(rowIndex: number, oldValue: Square, newValue: Square): void {
-    for (let col = 0; col < this.width; col++) {
-      if (this.getSquare(rowIndex, col) === oldValue) {
-        this.setSquare(rowIndex, col, newValue);
+  replaceConsecutive(dimension: Dimension, dimIndex: number, start: number, occurrences: number, val: Square): void {
+    if (dimension === "row") {
+      this.grid.splice(dimIndex * this.width + start, occurrences, ...Array(occurrences).fill(val));
+    } else {
+      for (let i = 0; i < occurrences; i++) {
+        const index = (start + i) * this.width + dimIndex;
+        this.grid[index] = val;
       }
     }
   }
 
-  replaceOccurrencesInCol(colIndex: number, oldValue: Square, newValue: Square): void {
-    for (let row = 0; row < this.height; row++) {
-      if (this.getSquare(row, colIndex) === oldValue) {
-        this.setSquare(row, colIndex, newValue);
+  replaceOccurrences(dimension: Dimension, dimIndex: number, oldValue: Square, newValue: Square): void {
+    const maxIteration = dimension === "row" ? this.width : this.height;
+    for (let idx = 0; idx < maxIteration; idx++) {
+      if (dimension === "row") {
+        if (this.getSquare(dimIndex, idx) === oldValue) {
+          this.setSquare(dimIndex, idx, newValue);
+        }
+      } else {
+        if (this.getSquare(idx, dimIndex) === oldValue) {
+          this.setSquare(idx, dimIndex, newValue);
+        }
       }
     }
   }
 
   // Iterates first through rows and then through cols
-  *vectorIterator(type: "rows" | "cols" | "both"): Generator<VectorData, void> {
-    if (type === "rows" || type === "both") {
+  *vectorIterator(type: Dimension | "both"): Generator<VectorData, void> {
+    if (type === "row" || type === "both") {
       for (let row = 0; row < this.height; row++) {
-        yield { rule: this.rowsRules[row], vector: this.getRow(row), index: row, kind: "row" };
+        yield { rule: this.rowsRules[row], vector: this.getVector("row", row), index: row, dimension: "row" };
       }
     }
 
-    if (type === "cols" || type === "both") {
+    if (type === "col" || type === "both") {
       for (let col = 0; col < this.width; col++) {
-        yield { rule: this.colsRules[col], vector: this.getColumn(col), index: col, kind: "col" };
+        yield { rule: this.colsRules[col], vector: this.getVector("col", col), index: col, dimension: "col" };
       }
     }
   }

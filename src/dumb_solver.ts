@@ -1,4 +1,4 @@
-import { Nonogram, spaceTaken, Square } from "./nonogram";
+import { Dimension, Nonogram, spaceTaken, Square } from "./nonogram";
 import "./array_ext";
 
 /**
@@ -8,45 +8,29 @@ import "./array_ext";
  * @returns void
  */
 function strategyOne(nonogram: Nonogram): void {
-  for (let rowIndex = 0; rowIndex < nonogram.height; rowIndex++) {
-    const rule = nonogram.rowsRules[rowIndex];
-    const freedom = nonogram.width - spaceTaken(rule);
+  (["row", "col"] as Dimension[]).forEach(dim => {
+    const oppositeDim = dim === "row" ? "col" : "row";
 
-    let col = 0;
-    rule.forEach(ruleItem => {
-      if (ruleItem > freedom) {
-        col += freedom;
+    for (let dimIndex = 0; dimIndex < nonogram.getMaxDim(oppositeDim); dimIndex++) {
+      const rule = nonogram.getDimRules(dim)[dimIndex];
+      const freedom = nonogram.getMaxDim(dim) - spaceTaken(rule);
 
-        const diff = ruleItem - freedom;
-        nonogram.replaceInRow(rowIndex, col, diff, 1);
-        col += diff;
-      } else {
-        col += ruleItem;
-      }
+      let offset = 0;
+      rule.forEach(ruleItem => {
+        if (ruleItem > freedom) {
+          offset += freedom;
 
-      col += 1;
-    });
-  }
+          const diff = ruleItem - freedom;
+          nonogram.replaceConsecutive(dim, dimIndex, offset, diff, 1);
+          offset += diff;
+        } else {
+          offset += ruleItem;
+        }
 
-  for (let colIndex = 0; colIndex < nonogram.width; colIndex++) {
-    const rule = nonogram.colsRules[colIndex];
-    const freedom = nonogram.height - spaceTaken(rule);
-
-    let row = 0;
-    rule.forEach(ruleItem => {
-      if (ruleItem > freedom) {
-        row += freedom;
-
-        const diff = ruleItem - freedom;
-        nonogram.replaceInCol(colIndex, row, diff, 1);
-        row += diff;
-      } else {
-        row += ruleItem;
-      }
-
-      row += 1;
-    });
-  }
+        offset += 1;
+      });
+    }
+  });
 }
 
 // duplicated
@@ -60,18 +44,14 @@ function vectorToSegments(vector: Square[]): number[] {
 }
 
 function fillEmptiesOnCompleteVectors(nonogram: Nonogram): void {
-  const vectorIterator = nonogram.vectorIterator("cols");
+  const vectorIterator = nonogram.vectorIterator("col");
 
   for (const vectorData of vectorIterator) {
-    const { rule, vector, index, kind } = vectorData;
+    const { rule, vector, index, dimension } = vectorData;
     const segments = vectorToSegments(vector);
 
     if (segments.equals(rule)) {
-      if (kind === "row") {
-        nonogram.replaceOccurrencesInRow(index, null, 0);
-      } else {
-        nonogram.replaceOccurrencesInCol(index, null, 0);
-      }
+      nonogram.replaceOccurrences(dimension, index, null, 0);
     }
   }
 }

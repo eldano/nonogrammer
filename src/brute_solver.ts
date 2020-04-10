@@ -73,11 +73,11 @@ function vectorToSegments(vector: Square[]): number[] {
  * @returns boolean
  */
 function isValid(nonogram: Nonogram): boolean {
-  const cols = [...Array(nonogram.width).keys()];
+  const cols = [...Array(nonogram.getMaxDim("row")).keys()];
 
   return cols.every(col => {
-    const colRule = nonogram.colsRules[col];
-    const testVector = nonogram.getColumn(col);
+    const colRule = nonogram.getDimRules("col")[col];
+    const testVector = nonogram.getVector("col", col);
     const segments = vectorToSegments(testVector);
 
     return segments.equals(colRule);
@@ -96,7 +96,7 @@ function* cartesian(possibilities: Square[][][]): Generator<Square[][], void> {
  * @returns void
  */
 export default function solve(nonogram: Nonogram): void {
-  const rowCombos = nonogram.rowsRules.map(rule => getPossibilities(rule, nonogram.width));
+  const rowCombos = nonogram.getDimRules("row").map(rule => getPossibilities(rule, nonogram.getMaxDim("row")));
 
   const gridCombosGenerator = cartesian(rowCombos);
   let combination = gridCombosGenerator.next();
@@ -105,8 +105,8 @@ export default function solve(nonogram: Nonogram): void {
   while (!solved && !combination.done) {
     const testGrid = combination.value.reduce((acc, val) => acc.concat(val), []);
     testGrid.forEach((square, index) => {
-      const row = Math.floor(index / nonogram.width);
-      const col = index % nonogram.width;
+      const row = Math.floor(index / nonogram.getMaxDim("row"));
+      const col = index % nonogram.getMaxDim("row");
       nonogram.setSquare(row, col, square);
     });
 
