@@ -1,5 +1,9 @@
-import { Dimension, Nonogram, spaceTaken, Square } from "./nonogram";
+import { Nonogram, Rule, Square } from "./nonogram";
 import "./array_ext";
+
+function spaceTaken(rule: Rule): number {
+  return rule.map(r => r.value).sum() + rule.length - 1;
+}
 
 /**
  * Fills the squares that are definitely 1 only using the rules and the total width and height.
@@ -8,34 +12,30 @@ import "./array_ext";
  * @returns void
  */
 function strategyOne(nonogram: Nonogram): void {
-  (["row", "col"] as Dimension[]).forEach(dim => {
-    const oppositeDim = dim === "row" ? "col" : "row";
+  for (const { rule, index, dimension } of nonogram.vectorIterator("both")) {
+    const freedom = nonogram.getSize(dimension) - spaceTaken(rule);
 
-    for (let dimIndex = 0; dimIndex < nonogram.getMaxDim(oppositeDim); dimIndex++) {
-      const rule = nonogram.getDimRules(dim)[dimIndex];
-      const freedom = nonogram.getMaxDim(dim) - spaceTaken(rule);
+    let offset = 0;
+    rule.forEach(ruleItem => {
+      if (ruleItem.value > freedom) {
+        offset += freedom;
 
-      let offset = 0;
-      rule.forEach(ruleItem => {
-        if (ruleItem > freedom) {
-          offset += freedom;
+        const diff = ruleItem.value - freedom;
+        nonogram.replaceConsecutive(dimension, index, offset, diff, 1);
+        offset += diff;
+      } else {
+        offset += ruleItem.value;
+      }
 
-          const diff = ruleItem - freedom;
-          nonogram.replaceConsecutive(dim, dimIndex, offset, diff, 1);
-          offset += diff;
-        } else {
-          offset += ruleItem;
-        }
-
-        offset += 1;
-      });
-    }
-  });
+      offset += 1;
+    });
+  }
 }
 
 // duplicated
 function vectorToSegments(vector: Square[]): number[] {
   return vector
+    .map(square => square.value)
     .map(val => (val === null ? "0" : val))
     .join("")
     .split("0")
@@ -50,7 +50,7 @@ function fillEmptiesOnCompleteVectors(nonogram: Nonogram): void {
     const { rule, vector, index, dimension } = vectorData;
     const segments = vectorToSegments(vector);
 
-    if (segments.equals(rule)) {
+    if (segments.equals(rule.map(r => r.value))) {
       nonogram.replaceOccurrences(dimension, index, null, 0);
     }
   }

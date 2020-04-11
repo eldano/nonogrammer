@@ -1,12 +1,8 @@
 import "./array_ext";
 
-export type Rule = number[];
-export type Square = null | 0 | 1;
+export type Rule = RuleItem[];
+export type SquareType = null | 0 | 1;
 export type Dimension = "row" | "col";
-
-export function spaceTaken(rule: Rule): number {
-  return rule.sum() + rule.length - 1;
-}
 
 export interface VectorData {
   rule: Rule;
@@ -15,67 +11,98 @@ export interface VectorData {
   dimension: Dimension;
 }
 
+export class RuleItem {
+  private _value: number;
+
+  constructor(value: number) {
+    this._value = value;
+  }
+
+  get value(): number {
+    return this._value;
+  }
+}
+
+export class Square {
+  value: SquareType;
+
+  constructor(value: SquareType) {
+    this.value = value;
+  }
+}
+
 export class Nonogram {
-  private width: number;
-  private height: number;
+  private _width: number;
+  private _height: number;
   private rowsRules: Rule[];
   private colsRules: Rule[];
   private grid: Square[];
 
-  constructor(width: number, height: number, rowsRules: Rule[], colsRules: Rule[]) {
-    this.width = width;
-    this.height = height;
-    this.rowsRules = rowsRules;
-    this.colsRules = colsRules;
-    this.grid = Array(width * height).fill(null);
+  constructor(width: number, height: number, rowsRules: number[][], colsRules: number[][]) {
+    this._width = width;
+    this._height = height;
+
+    this.rowsRules = rowsRules.map(rowRule => {
+      return rowRule.map(val => new RuleItem(val));
+    });
+
+    this.colsRules = colsRules.map(colRule => {
+      return colRule.map(val => new RuleItem(val));
+    });
+
+    this.grid = [];
+    for (let square = 0; square < width * height; square++) {
+      this.grid[square] = new Square(null);
+    }
   }
 
-  getMaxDim(dim: Dimension): number {
-    return dim === "row" ? this.width : this.height;
+  get width(): number {
+    return this._width;
   }
 
-  getDimRules(dim: Dimension): Rule[] {
+  get height(): number {
+    return this._height;
+  }
+
+  getSize(dim: Dimension): number {
+    return dim === "row" ? this._width : this._height;
+  }
+
+  getRules(dim: Dimension): Rule[] {
     return dim === "row" ? this.rowsRules : this.colsRules;
   }
 
-  getSquare(row: number, column: number): Square {
-    return this.grid[row * this.width + column];
+  getSquareValue(row: number, column: number): SquareType {
+    return this.grid[row * this._width + column].value;
   }
 
-  setSquare(row: number, column: number, square: Square): void {
-    this.grid[row * this.width + column] = square;
+  setSquareValue(row: number, column: number, square: SquareType): void {
+    this.grid[row * this._width + column].value = square;
   }
 
   getVector(dimension: Dimension, index: number): Square[] {
     if (dimension === "row") {
-      return this.grid.slice(index * this.width, (index + 1) * this.width);
+      return this.grid.slice(index * this._width, (index + 1) * this._width);
     } else {
-      return this.grid.filter((_item, col) => col % this.width === index);
+      return this.grid.filter((_item, col) => col % this._width === index);
     }
   }
 
-  replaceConsecutive(dimension: Dimension, dimIndex: number, start: number, occurrences: number, val: Square): void {
-    if (dimension === "row") {
-      this.grid.splice(dimIndex * this.width + start, occurrences, ...Array(occurrences).fill(val));
-    } else {
-      for (let i = 0; i < occurrences; i++) {
-        const index = (start + i) * this.width + dimIndex;
-        this.grid[index] = val;
-      }
+  replaceConsecutive(dim: Dimension, dimIndex: number, start: number, occurrences: number, val: SquareType): void {
+    for (let i = 0; i < occurrences; i++) {
+      const row = dim === "row" ? dimIndex : start + i;
+      const col = dim === "row" ? start + i : dimIndex;
+      this.setSquareValue(row, col, val);
     }
   }
 
-  replaceOccurrences(dimension: Dimension, dimIndex: number, oldValue: Square, newValue: Square): void {
-    const maxIteration = dimension === "row" ? this.width : this.height;
+  replaceOccurrences(dim: Dimension, dimIndex: number, oldValue: SquareType, newValue: SquareType): void {
+    const maxIteration = dim === "row" ? this._width : this._height;
     for (let idx = 0; idx < maxIteration; idx++) {
-      if (dimension === "row") {
-        if (this.getSquare(dimIndex, idx) === oldValue) {
-          this.setSquare(dimIndex, idx, newValue);
-        }
-      } else {
-        if (this.getSquare(idx, dimIndex) === oldValue) {
-          this.setSquare(idx, dimIndex, newValue);
-        }
+      const row = dim === "row" ? dimIndex : idx;
+      const col = dim === "row" ? idx : dimIndex;
+      if (this.getSquareValue(row, col) === oldValue) {
+        this.setSquareValue(row, col, newValue);
       }
     }
   }
@@ -83,13 +110,13 @@ export class Nonogram {
   // Iterates first through rows and then through cols
   *vectorIterator(type: Dimension | "both"): Generator<VectorData, void> {
     if (type === "row" || type === "both") {
-      for (let row = 0; row < this.height; row++) {
+      for (let row = 0; row < this._height; row++) {
         yield { rule: this.rowsRules[row], vector: this.getVector("row", row), index: row, dimension: "row" };
       }
     }
 
     if (type === "col" || type === "both") {
-      for (let col = 0; col < this.width; col++) {
+      for (let col = 0; col < this._width; col++) {
         yield { rule: this.colsRules[col], vector: this.getVector("col", col), index: col, dimension: "col" };
       }
     }
@@ -101,7 +128,7 @@ export class Nonogram {
   //   console.log(itItem);
   // }
   *rowItemsIterator(row: number): Generator<Square, void> {
-    for (let i = row * this.width; i < (row + 1) * this.width; i++) {
+    for (let i = row * this._width; i < (row + 1) * this._width; i++) {
       yield this.grid[i];
     }
   }
@@ -112,7 +139,7 @@ export class Nonogram {
   //   console.log(itItem);
   // }
   *colItemsIterator(col: number): Generator<Square, void> {
-    for (let i = col; i < this.height * this.width; i += this.width) {
+    for (let i = col; i < this._height * this._width; i += this._width) {
       yield this.grid[i];
     }
   }

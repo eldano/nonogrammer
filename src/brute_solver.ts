@@ -1,4 +1,4 @@
-import { Nonogram, Rule, Square } from "./nonogram";
+import { Nonogram, Rule, SquareType } from "./nonogram";
 import "./array_ext";
 
 /**
@@ -6,9 +6,9 @@ import "./array_ext";
  * @param  {number} leftPad number of zeros to the left (has to be >= 0)
  * @param  {number} sequence number of ones in the middle (has to be >= 0)
  * @param  {number} rightPad number of zeros to the left (has to be >= 0)
- * @returns Square
+ * @returns SquareType[]
  */
-function paddedSequence(leftPad: number, sequence: number, rightPad: number): Square[] {
+function paddedSequence(leftPad: number, sequence: number, rightPad: number): SquareType[] {
   return Array(leftPad)
     .fill(0)
     .concat(Array(sequence).fill(1))
@@ -22,27 +22,27 @@ function paddedSequence(leftPad: number, sequence: number, rightPad: number): Sq
  *
  * @param  {Rule} rule a rule that the vector must fulfill
  * @param  {number} length length of the vector
- * @returns Square[][] An array with all the possible values for the vector
+ * @returns SquareType[][] An array with all the possible values for the vector
  */
-function getPossibilities(rule: Rule, length: number): Square[][] {
+function getPossibilities(rule: Rule, length: number): SquareType[][] {
   const totalResults = [];
 
   if (rule.length === 0 || rule.length > length) {
     return [];
   } else {
-    const maxLeftPadZeroes = length - rule.sum() - rule.length + 1;
+    const maxLeftPadZeroes = length - rule.map(r => r.value).sum() - rule.length + 1;
 
     for (let leftPadZeroes = 0; leftPadZeroes <= maxLeftPadZeroes; leftPadZeroes++) {
       if (rule.length === 1) {
-        const remainingZeros = length - leftPadZeroes - rule[0];
-        const result = paddedSequence(leftPadZeroes, rule[0], remainingZeros);
+        const remainingZeros = length - leftPadZeroes - rule[0].value;
+        const result = paddedSequence(leftPadZeroes, rule[0].value, remainingZeros);
 
         totalResults.push(result);
       } else {
         const [firstRuleItem, ...restRuleItems] = rule;
-        const result = paddedSequence(leftPadZeroes, firstRuleItem, 1);
+        const result = paddedSequence(leftPadZeroes, firstRuleItem.value, 1);
 
-        const restPossibilities = getPossibilities(restRuleItems, length - firstRuleItem - 1 - leftPadZeroes);
+        const restPossibilities = getPossibilities(restRuleItems, length - firstRuleItem.value - 1 - leftPadZeroes);
 
         restPossibilities.forEach(possibility => {
           totalResults.push(result.concat(possibility));
@@ -57,10 +57,10 @@ function getPossibilities(rule: Rule, length: number): Square[][] {
  * Given a vector of squares, returns an array of consecutive segments.
  * Examples:
  *    vectorToSegments([0, 1, 1, 0, 1]) => [2, 1]
- * @param  {Square[]} vector
+ * @param  {SquareType[]} vector
  * @returns number[]
  */
-function vectorToSegments(vector: Square[]): number[] {
+function vectorToSegments(vector: SquareType[]): number[] {
   return vector
     .join("")
     .split("0")
@@ -73,18 +73,18 @@ function vectorToSegments(vector: Square[]): number[] {
  * @returns boolean
  */
 function isValid(nonogram: Nonogram): boolean {
-  const cols = [...Array(nonogram.getMaxDim("row")).keys()];
+  const cols = [...Array(nonogram.width).keys()];
 
   return cols.every(col => {
-    const colRule = nonogram.getDimRules("col")[col];
-    const testVector = nonogram.getVector("col", col);
+    const colRule = nonogram.getRules("col")[col];
+    const testVector = nonogram.getVector("col", col).map(square => square.value);
     const segments = vectorToSegments(testVector);
 
-    return segments.equals(colRule);
+    return segments.equals(colRule.map(r => r.value));
   });
 }
 
-function* cartesian(possibilities: Square[][][]): Generator<Square[][], void> {
+function* cartesian(possibilities: SquareType[][][]): Generator<SquareType[][], void> {
   const [head, ...tail] = possibilities;
   const remainder = tail.length ? cartesian(tail) : [[]];
   for (const r of remainder) for (const h of head) yield [h, ...r];
@@ -96,7 +96,7 @@ function* cartesian(possibilities: Square[][][]): Generator<Square[][], void> {
  * @returns void
  */
 export default function solve(nonogram: Nonogram): void {
-  const rowCombos = nonogram.getDimRules("row").map(rule => getPossibilities(rule, nonogram.getMaxDim("row")));
+  const rowCombos = nonogram.getRules("row").map(rule => getPossibilities(rule, nonogram.width));
 
   const gridCombosGenerator = cartesian(rowCombos);
   let combination = gridCombosGenerator.next();
@@ -104,10 +104,10 @@ export default function solve(nonogram: Nonogram): void {
 
   while (!solved && !combination.done) {
     const testGrid = combination.value.reduce((acc, val) => acc.concat(val), []);
-    testGrid.forEach((square, index) => {
-      const row = Math.floor(index / nonogram.getMaxDim("row"));
-      const col = index % nonogram.getMaxDim("row");
-      nonogram.setSquare(row, col, square);
+    testGrid.forEach((squareVal, index) => {
+      const row = Math.floor(index / nonogram.width);
+      const col = index % nonogram.width;
+      nonogram.setSquareValue(row, col, squareVal);
     });
 
     if (isValid(nonogram)) {

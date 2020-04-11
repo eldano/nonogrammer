@@ -7,7 +7,7 @@ let largestRowRule = 0;
 let largestColRule = 0;
 
 function printHeading(nonogram: Nonogram): void {
-  console.log(`Nonogram ${nonogram.getMaxDim("row")} x ${nonogram.getMaxDim("col")}`);
+  console.log(`Nonogram ${nonogram.width} x ${nonogram.height}`);
   console.log("");
 }
 
@@ -17,11 +17,11 @@ function printColsRules(nonogram: Nonogram): void {
       process.stdout.write(" ".padStart(PADSTART));
     }
 
-    nonogram.getDimRules("col").forEach(definition => {
-      if (definition.length - 1 < i) {
+    nonogram.getRules("col").forEach(rule => {
+      if (rule.length - 1 < i) {
         process.stdout.write(" ".padStart(PADSTART));
       } else {
-        process.stdout.write(definition[definition.length - 1 - i].toString().padStart(PADSTART));
+        process.stdout.write(rule[rule.length - 1 - i].value.toString().padStart(PADSTART));
       }
     });
     process.stdout.write("\n");
@@ -29,13 +29,13 @@ function printColsRules(nonogram: Nonogram): void {
 }
 
 export default function print(nonogram: Nonogram): void {
-  largestRowRule = Math.max(...nonogram.getDimRules("row").map(rule => rule.length));
-  largestColRule = Math.max(...nonogram.getDimRules("col").map(rule => rule.length));
+  largestRowRule = Math.max(...nonogram.getRules("row").map(rule => rule.length));
+  largestColRule = Math.max(...nonogram.getRules("col").map(rule => rule.length));
 
   printHeading(nonogram);
   printColsRules(nonogram);
 
-  nonogram.getDimRules("row").forEach((rule, row) => {
+  nonogram.getRules("row").forEach((rule, row) => {
     const spacesToTheLeft = largestRowRule - rule.length;
 
     for (let j = 0; j < spacesToTheLeft; j++) {
@@ -43,12 +43,12 @@ export default function print(nonogram: Nonogram): void {
     }
 
     for (let i = 0; i < rule.length; i++) {
-      process.stdout.write(rule[i].toString().padStart(PADSTART));
+      process.stdout.write(rule[i].value.toString().padStart(PADSTART));
     }
 
     // print row of grid
-    for (let column = 0; column < nonogram.getMaxDim("row"); column++) {
-      const value = nonogram.getSquare(row, column);
+    for (let column = 0; column < nonogram.width; column++) {
+      const value = nonogram.getSquareValue(row, column);
       let valueStr, padChar;
 
       if (value === 1) {
