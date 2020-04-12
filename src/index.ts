@@ -2,6 +2,7 @@ import { Nonogram } from "./nonogram";
 import print from "./console_printer";
 import bruteSolve from "./brute_solver";
 import dumbSolve from "./dumb_solver";
+import printHtml from "./html_printer";
 
 function nonoOne(): Nonogram {
   const rowsRules = [[8], [10], [1, 8], [8], [4]];
@@ -165,3 +166,4 @@ if (index === 6) {
 }
 
 print(nonogram); //solved
+printHtml(nonogram);
