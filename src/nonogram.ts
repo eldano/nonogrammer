@@ -1,4 +1,5 @@
 import "./array_ext";
+import { getPossibilities } from "./utils";
 
 export type Rule = RuleItem[];
 export type SquareType = null | 0 | 1;
@@ -25,6 +26,8 @@ export class RuleItem {
 
 export class Square {
   value: SquareType;
+  applyingRowRules: Set<RuleItem | null> = new Set();
+  applyingColRules: Set<RuleItem | null> = new Set();
 
   constructor(value: SquareType) {
     this.value = value;
@@ -54,6 +57,8 @@ export class Nonogram {
     for (let square = 0; square < width * height; square++) {
       this.grid[square] = new Square(null);
     }
+
+    this.calcApplyingRules();
   }
 
   get width(): number {
@@ -74,6 +79,10 @@ export class Nonogram {
 
   getSquareValue(row: number, column: number): SquareType {
     return this.grid[row * this._width + column].value;
+  }
+
+  getSquare(row: number, column: number): Square {
+    return this.grid[row * this._width + column];
   }
 
   setSquareValue(row: number, column: number, square: SquareType): void {
@@ -104,6 +113,46 @@ export class Nonogram {
       if (this.getSquareValue(row, col) === oldValue) {
         this.setSquareValue(row, col, newValue);
       }
+    }
+  }
+
+  private calcApplyingRules(): void {
+    const vectors = this.vectorIterator("both");
+
+    for (const { rule, vector, dimension } of vectors) {
+      const possibilities = getPossibilities(rule, this.getSize(dimension));
+
+      possibilities.forEach(combination => {
+        let ruleIdx = 0;
+        let ruleItem = rule[ruleIdx];
+        let rulePartsFound = 0;
+
+        combination.forEach((val, idx) => {
+          const square = vector[idx];
+          if (val === 0) {
+            if (dimension === "row") {
+              square.applyingRowRules.add(null);
+            } else {
+              square.applyingColRules.add(null);
+            }
+          }
+
+          if (val === 1) {
+            if (dimension === "row") {
+              square.applyingRowRules.add(ruleItem);
+            } else {
+              square.applyingColRules.add(ruleItem);
+            }
+
+            rulePartsFound++;
+            if (rulePartsFound === ruleItem.value) {
+              rulePartsFound = 0;
+              ruleIdx++;
+              ruleItem = rule[ruleIdx];
+            }
+          }
+        });
+      });
     }
   }
 
