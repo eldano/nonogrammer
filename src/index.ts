@@ -158,7 +158,10 @@ const nonogram = nonograms[index];
 
 print(nonogram); //empty
 
-//dumbSolve(nonogram);
-bruteSolve(nonogram);
+if (index === 6) {
+  dumbSolve(nonogram);
+} else {
+  bruteSolve(nonogram);
+}
 
 print(nonogram); //solved

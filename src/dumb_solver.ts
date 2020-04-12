@@ -1,9 +1,6 @@
-import { Nonogram, Rule, Square } from "./nonogram";
+import { Nonogram } from "./nonogram";
+import { vectorToSegments } from "./utils";
 import "./array_ext";
-
-function spaceTaken(rule: Rule): number {
-  return rule.map(r => r.value).sum() + rule.length - 1;
-}
 
 /**
  * Fills the squares that are definitely 1 only using the rules and the total width and height.
@@ -13,7 +10,8 @@ function spaceTaken(rule: Rule): number {
  */
 function strategyOne(nonogram: Nonogram): void {
   for (const { rule, index, dimension } of nonogram.vectorIterator("both")) {
-    const freedom = nonogram.getSize(dimension) - spaceTaken(rule);
+    const spaceTaken = rule.map(r => r.value).sum() + rule.length - 1;
+    const freedom = nonogram.getSize(dimension) - spaceTaken;
 
     let offset = 0;
     rule.forEach(ruleItem => {
@@ -32,23 +30,12 @@ function strategyOne(nonogram: Nonogram): void {
   }
 }
 
-// duplicated
-function vectorToSegments(vector: Square[]): number[] {
-  return vector
-    .map(square => square.value)
-    .map(val => (val === null ? "0" : val))
-    .join("")
-    .split("0")
-    .filter(el => el !== "")
-    .map(el => el.length);
-}
-
 function fillEmptiesOnCompleteVectors(nonogram: Nonogram): void {
   const vectorIterator = nonogram.vectorIterator("col");
 
   for (const vectorData of vectorIterator) {
     const { rule, vector, index, dimension } = vectorData;
-    const segments = vectorToSegments(vector);
+    const segments = vectorToSegments(vector.map(square => square.value));
 
     if (segments.equals(rule.map(r => r.value))) {
       nonogram.replaceOccurrences(dimension, index, null, 0);
