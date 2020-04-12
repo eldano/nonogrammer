@@ -144,17 +144,17 @@ function nonoSeven(): Nonogram {
 
 // prettier-ignore
 const nonograms = [
-  nonoOne(),
-  nonoTwo(),
-  nonoThree(),
-  nonoFour(),
-  nonoFive(),
-  nonoSix(),
-  nonoSeven(),
+  nonoOne,
+  nonoTwo,
+  nonoThree,
+  nonoFour,
+  nonoFive,
+  nonoSix,
+  nonoSeven,
 ];
 
 const index = +process.argv[2];
-const nonogram = nonograms[index];
+const nonogram = nonograms[index].call(this);
 
 print(nonogram); //empty
 
