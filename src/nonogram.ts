@@ -171,6 +171,15 @@ export class Nonogram {
     }
   }
 
+  // Iterates through all the squares, left to right, top to bottom
+  *squareIterator(): Generator<Square, void> {
+    for (let row = 0; row < this.height; row++) {
+      for (let col = 0; col < this.width; col++) {
+        yield this.getSquare(row, col);
+      }
+    }
+  }
+
   // It can be used in for..of like:
   // const it = nonogram.rowItemsIterator(2);
   // for (const itItem of it) {
