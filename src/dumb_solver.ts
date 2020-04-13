@@ -8,13 +8,24 @@ function calcApplyingRules(nonogram: Nonogram): void {
   for (const { rule, vector, dimension } of vectors) {
     const possibilities = getPossibilities(rule, nonogram.getSize(dimension));
 
-    possibilities.forEach(combination => {
+    const filteredPossibilities = possibilities.filter(possibility => {
+      return vector.every((square, index) => {
+        if (square.value === 0 || square.value === 1) {
+          return possibility[index] === square.value;
+        } else {
+          return true;
+        }
+      });
+    });
+
+    filteredPossibilities.forEach(combination => {
       let ruleIdx = 0;
       let ruleItem = rule[ruleIdx];
       let rulePartsFound = 0;
 
       combination.forEach((val, idx) => {
         const square = vector[idx];
+
         if (val === 0) {
           if (dimension === "row") {
             square.applyingRowRules.add(null);
@@ -57,7 +68,19 @@ function strategyTwo(nonogram: Nonogram): void {
   }
 }
 
+function clearApplyingRules(nonogram: Nonogram): void {
+  for (const square of nonogram.squareIterator()) {
+    square.applyingRowRules.clear();
+    square.applyingColRules.clear();
+  }
+}
+
 export default function solve(nonogram: Nonogram): void {
-  calcApplyingRules(nonogram);
-  strategyTwo(nonogram);
+  const iterations = 15;
+
+  for (let i = 0; i < iterations; i++) {
+    clearApplyingRules(nonogram);
+    calcApplyingRules(nonogram);
+    strategyTwo(nonogram);
+  }
 }
