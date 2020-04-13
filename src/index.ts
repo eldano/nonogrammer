@@ -143,6 +143,24 @@ function nonoSeven(): Nonogram {
   return nonogram;
 }
 
+//https://www.nonograms.org/nonograms/i/31863
+function nonoEight(): Nonogram {
+  //prettier-ignore
+  const rowsRules = [
+    [9], [5, 3, 2], [7, 3, 2], [9, 3, 2], [5, 10], [6, 3, 2, 2], [1, 5, 2, 2, 2],
+    [2, 7, 1, 1, 2], [5, 6, 2, 2], [2, 3, 4, 1], [3, 3, 2, 1, 2], [4, 4, 3],
+    [8, 3], [8, 4], [4, 2, 3]
+  ];
+  //prettier-ignore
+  const colsRules = [
+    [12], [4, 8], [6, 1, 5], [9, 4], [11, 2], [4, 3, 5], [5, 3, 4], [1, 4, 3, 3], [2, 9, 1],
+    [3, 7, 1], [5, 2], [1, 3, 3, 1], [2, 4, 1], [2, 2, 2], [3, 1, 3], [3, 2, 1, 1, 1],
+    [2, 2], [2, 1], [2, 2], [3]
+  ];
+
+  return new Nonogram(20, 15, rowsRules, colsRules);
+}
+
 // prettier-ignore
 const nonograms = [
   nonoOne,
@@ -152,6 +170,7 @@ const nonograms = [
   nonoFive,
   nonoSix,
   nonoSeven,
+  nonoEight,
 ];
 
 const index = +process.argv[2];
@@ -159,7 +178,7 @@ const nonogram = nonograms[index].call(this);
 
 print(nonogram); //empty
 
-if (index === 6) {
+if (index === 6 || index === 5 || index === 7) {
   dumbSolve(nonogram);
 } else {
   bruteSolve(nonogram);
