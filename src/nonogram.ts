@@ -96,8 +96,6 @@ export class Nonogram {
     for (let square = 0; square < width * height; square++) {
       this.grid[square] = new Square(`sq_${lastSquareId++}`, null);
     }
-
-    this.calcApplyingRules();
   }
 
   get width(): number {
@@ -152,46 +150,6 @@ export class Nonogram {
       if (this.getSquareValue(row, col) === oldValue) {
         this.setSquareValue(row, col, newValue);
       }
-    }
-  }
-
-  private calcApplyingRules(): void {
-    const vectors = this.vectorIterator("both");
-
-    for (const { rule, vector, dimension } of vectors) {
-      const possibilities = getPossibilities(rule, this.getSize(dimension));
-
-      possibilities.forEach(combination => {
-        let ruleIdx = 0;
-        let ruleItem = rule[ruleIdx];
-        let rulePartsFound = 0;
-
-        combination.forEach((val, idx) => {
-          const square = vector[idx];
-          if (val === 0) {
-            if (dimension === "row") {
-              square.applyingRowRules.add(null);
-            } else {
-              square.applyingColRules.add(null);
-            }
-          }
-
-          if (val === 1) {
-            if (dimension === "row") {
-              square.applyingRowRules.add(ruleItem);
-            } else {
-              square.applyingColRules.add(ruleItem);
-            }
-
-            rulePartsFound++;
-            if (rulePartsFound === ruleItem.value) {
-              rulePartsFound = 0;
-              ruleIdx++;
-              ruleItem = rule[ruleIdx];
-            }
-          }
-        });
-      });
     }
   }
 
