@@ -13,24 +13,60 @@ export interface VectorData {
 }
 
 export class RuleItem {
+  readonly id: string;
+  revealedSquares = 0;
   private _value: number;
 
-  constructor(value: number) {
+  constructor(id: string, value: number) {
+    this.id = id;
     this._value = value;
   }
 
   get value(): number {
     return this._value;
   }
+
+  get fullfilled(): boolean {
+    return this._value === this.revealedSquares;
+  }
 }
 
 export class Square {
-  value: SquareType;
+  readonly id: string;
+  private _value: SquareType;
   applyingRowRules: Set<RuleItem | null> = new Set();
   applyingColRules: Set<RuleItem | null> = new Set();
 
-  constructor(value: SquareType) {
-    this.value = value;
+  constructor(id: string, value: SquareType) {
+    this.id = id;
+    this._value = value;
+  }
+
+  set value(val: SquareType) {
+    this._value = val;
+
+    if (val === 1) {
+      this.applyingRowRules.delete(null);
+      this.applyingColRules.delete(null);
+
+      if (this.applyingRowRules.size === 1) {
+        const ruleItem: RuleItem = this.applyingRowRules.values().next().value;
+        ruleItem.revealedSquares++;
+      }
+      if (this.applyingColRules.size === 1) {
+        const ruleItem: RuleItem = this.applyingColRules.values().next().value;
+        ruleItem.revealedSquares++;
+      }
+    } else if (val === 0) {
+      this.applyingRowRules.clear();
+      this.applyingRowRules.add(null);
+      this.applyingColRules.clear();
+      this.applyingColRules.add(null);
+    }
+  }
+
+  get value(): SquareType {
+    return this._value;
   }
 }
 
@@ -45,17 +81,20 @@ export class Nonogram {
     this._width = width;
     this._height = height;
 
+    let lastRuleId = 0;
+
     this.rowsRules = rowsRules.map(rowRule => {
-      return rowRule.map(val => new RuleItem(val));
+      return rowRule.map(val => new RuleItem(`rule_${lastRuleId++}`, val));
     });
 
     this.colsRules = colsRules.map(colRule => {
-      return colRule.map(val => new RuleItem(val));
+      return colRule.map(val => new RuleItem(`rule_${lastRuleId++}`, val));
     });
 
+    let lastSquareId = 0;
     this.grid = [];
     for (let square = 0; square < width * height; square++) {
-      this.grid[square] = new Square(null);
+      this.grid[square] = new Square(`sq_${lastSquareId++}`, null);
     }
 
     this.calcApplyingRules();
