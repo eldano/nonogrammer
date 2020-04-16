@@ -1,8 +1,8 @@
 import { Nonogram } from "./nonogram";
 import print from "./console_printer";
-import bruteSolve from "./brute_solver";
 import dumbSolve from "./dumb_solver";
 import printHtml from "./html_printer";
+import { loadNonogram } from "./website_parser";
 
 function nonoOne(): Nonogram {
   const rowsRules = [[8], [10], [1, 8], [8], [4]];
@@ -173,16 +173,12 @@ const nonograms = [
   nonoEight,
 ];
 
-const index = +process.argv[2];
-const nonogram = nonograms[index].call(this);
+const index = process.argv[2];
 
-print(nonogram); //empty
-
-if (index === 6 || index === 5 || index === 7) {
+loadNonogram(index).then(nonogram => {
+  print(nonogram); //empty
   dumbSolve(nonogram);
-} else {
-  bruteSolve(nonogram);
-}
 
-print(nonogram); //solved
-printHtml(nonogram);
+  print(nonogram); //solved
+  printHtml(nonogram);
+});
