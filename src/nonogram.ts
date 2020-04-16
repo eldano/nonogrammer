@@ -1,5 +1,4 @@
 import "./array_ext";
-import { getPossibilities } from "./utils";
 
 export type Rule = RuleItem[];
 export type SquareType = null | 0 | 1;
